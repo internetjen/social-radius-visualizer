@@ -1,0 +1,23 @@
+{
+  "name": "social-radius-visualizer",
+  "version": "1.0.0",
+  "description": "A simple interactive map to visualize the reach of a social marketing tool within a specified radius",
+  "main": "leaflet.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/internetjen/social-radius-visualizer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/internetjen/social-radius-visualizer/issues"
+  },
+  "homepage": "https://github.com/internetjen/social-radius-visualizer#readme",
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  }
+}

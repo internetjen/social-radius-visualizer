@@ -1,0 +1,12 @@
+# Node modules
+/node_modules
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor specific files (if you use VS Code)
+.vscode/
+
+# npm package-lock file (optional but often excluded)
+package-lock.json
