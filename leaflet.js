@@ -54,6 +54,11 @@ function geocodeAddress(address) {
         L.marker([lat, lon]) //Creates marker at searched address, adds to map, and pops up
             .addTo(map)
             .bindPopup(`<b>${address}</>`);
+            
+            // Enable the radius dropdown after a successful address search
+            document.getElementById('radiusSelect').disabled = false; // Enable radius selection
+            document.getElementById('radiusSelect').value = ""; // Reset the dropdown value to "Select Radius"
+
         }, 2000); // Matches duration of flyTo effect
 
     } else {
