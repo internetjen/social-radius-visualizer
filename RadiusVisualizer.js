@@ -15,6 +15,17 @@ document.getElementById('searchButton').addEventListener('click', function() { /
     geocodeAddress(address) //Calls function with user's address input as parameters
 });
 
+const purpleMarkerIcon = L.divIcon({
+    className: 'custom-marker',
+    html: `
+      <div class="marker-pin"></div>
+      <div class="marker-dot"></div>
+    `,
+    iconSize: [30, 42],
+    iconAnchor: [15, 42],
+    popupAnchor: [0, -40]
+});
+
 //Geocoding function
 function geocodeAddress(address) { 
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`; //Constructs a URL to call the Nominatim API, passing the address as a query.
@@ -40,9 +51,13 @@ function geocodeAddress(address) {
             if (map._marker) {
                 map.removeLayer(map._marker);
             }
-            map._marker = L.marker([lat, lon])
+            map._marker = L.marker([lat, lon], {icon: purpleMarkerIcon})
                 .addTo(map)
-                .bindPopup(`<b>${address}</b>`); 
+                .bindPopup(`
+                    <div class="marker-popup">
+                    <strong>${address}</strong><br>
+                    </div>
+                `).openPopup(); 
 
             //Show radius dropdown after successful address search
             document.getElementById('radius').style.visibility = 'visible';

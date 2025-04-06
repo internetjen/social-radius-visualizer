@@ -146,3 +146,36 @@
       font-size: 2rem;
     }
   }
+
+  /* custom market styling */
+  .custom-marker {
+    position: relative;
+    width: 30px;
+    height: 42px;
+}
+
+.marker-pin {
+    width: 30px;
+    height: 42px;
+    background: var(--primary-color);
+    clip-path: path("M15 0C6.7 0 0 6.7 0 15c0 10.2 15 27 15 27s15-16.8 15-27C30 6.7 23.3 0 15 0z");
+}
+
+.marker-dot {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+}
+
+.marker-popup {
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
