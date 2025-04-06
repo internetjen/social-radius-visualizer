@@ -1,4 +1,4 @@
-var map = L.map('map').setView([39.8283, -98.5795], 4); // Set initial zoom and coordinates
+var map = L.map('map').setView([39.8283, -98.5795], 5); // Set initial zoom and coordinates
 
 // Add a tile layer (credit: OpenStreetMap)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -15,21 +15,21 @@ document.getElementById('searchButton').addEventListener('click', function() { /
     geocodeAddress(address) //Calls function with user's address input as parameters
 });
 
-//Radius select function
-document.getElementById('radiusSelect').addEventListener('change', function(){
-    if (lat && lon) { //Checks if address is input before changing radius
-    const radius = this.value; //Get selected radius from dropdown
-    if (radius) {
-        drawCircle(lat, lon, radius); //Draw circle with selected radius
-    } else {
-        alert("Please select a radius.");
-    }
-} else {
-    alert("Please search for an address first.");
-    }
-});
+// //Radius select function
+// document.getElementById('radiusSelect').addEventListener('change', function(){
+//     if (lat && lon) { //Checks if address is input before changing radius
+//     const radius = this.value; //Get selected radius from dropdown
+//     if (radius) {
+//         drawCircle(lat, lon, radius); //Draw circle with selected radius
+//     } else {
+//         alert("Please select a radius.");
+//     }
+// } else {
+//     alert("Please search for an address first.");
+//     }
+// });
 
-
+//Geocoding function
 function geocodeAddress(address) { 
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`; //Constructs a URL to call the Nominatim API, passing the address as a query.
 
@@ -45,20 +45,20 @@ function geocodeAddress(address) {
         console.log(`Latitude: ${lat}, Longitude: ${lon}`); //Logs the coordinates to the console
 
         //Fly to and zoom into searched location
-        map.flyTo([lat, lon], 8, {
+        map.flyTo([lat, lon], 10, {
             duration: 2 //Duration of effect
         });
 
         //Add marker of searched location
         setTimeout(() => {
-        L.marker([lat, lon]) //Creates marker at searched address, adds to map, and pops up
-            .addTo(map)
-            .bindPopup(`<b>${address}</>`);
-            
-            // Enable the radius dropdown after a successful address search
-            document.getElementById('radiusSelect').disabled = false; // Enable radius selection
-            document.getElementById('radiusSelect').value = ""; // Reset the dropdown value to "Select Radius"
+            if (map._marker) {
+                map.removeLayer(map._marker);
+            }
+            map._marker = L.marker([lat, lon])
+                .addTo(map)
+                .bindPopup(`<b>${address}</b>`); 
 
+            enableCustomDropdown();
         }, 2000); // Matches duration of flyTo effect
 
     } else {
@@ -89,3 +89,52 @@ function drawCircle(lat, lon, miles) {
         radius: radiusInMeters //Radius in meters
     }).addTo(map).bindPopup(`${miles} mile radius`).openPopup();
 }
+
+//Custom dropdown handling
+const dropdown = document.getElementById('radiusSelect');
+const selected = dropdown.querySelector('.dropdown-selected');
+const options = dropdown.querySelector('.dropdown-options');
+const optionItems = dropdown.querySelectorAll('.dropdown-option');
+
+function enableCustomDropdown() {
+    dropdown.classList.remove('disabled');
+    selected.innerText = 'Select Radius'
+    selected.setAttribute('data-value', '')
+}
+
+//Toggle options visibility
+selected.addEventListener('click', () => {
+    if (dropdown.classList.contains('disabled')) {
+        alert("Please search for an address first.");
+        return;
+    }
+    options.style.display = options.style.display === 'block' ? 'none' : 'block';
+});
+
+//Option selection
+optionItems.forEach(option => {
+    option.addEventListener('click', () => {
+        const value = option.getAttribute('data-value');
+        const text = option.innerText;
+
+        if (!lat || ! lon) {
+            alert("Please search for an address first.");
+            selected.innerText= 'Select Radius';
+            selected.setAttribute('data-value', '');
+            return;
+        }
+
+        selected.innerText = text;
+        selected.setAttribute('data-value', value);
+        options.style.display = 'none';
+
+        drawCircle(lat, lon, value);
+    });
+});
+
+//Close dropdown if clicked outside
+document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target)) {
+        options.style.display = 'none';
+    }
+});

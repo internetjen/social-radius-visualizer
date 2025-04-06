@@ -19,14 +19,16 @@
     </div>
 
     <!--Radius selection dropdown-->
-    <div id="radius">
+    <div id="radius" class="custom-dropdown">
         <label for="radiusSelect">Radius:</label>
-        <select id="radiusSelect" disabled> <!--Disabled until address is searched-->
-            <option value="">Select Radius</option>
-            <option value="15">15 Miles</option>
-            <option value="30">30 Miles</option>
-        </select>
-    </div>
+        <div id="radiusSelect" class="dropdown disabled"> 
+            <div class="dropdown-selected">Select Radius</div>
+            <div class="dropdown-options">
+                <div class="dropdown-option" data-value="15">15 Miles</div>
+                <div class="dropdown-option" data-value="30">30 Miles</div>
+            </div>
+        </div>
+    </div>    
 
     <!-- Map container -->
     <div id="map"></div>
