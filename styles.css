@@ -1,83 +1,116 @@
-/* General Body styling */
-body {
-    font-family: Arial, sans-serif;
+:root {
+    --primary-color: #A84DCF;
+    --secondary-color: #3D1B5B;
+    --background-color: #f9f9f9;
+    --text-color: #333;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
     margin: 0;
-    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #2B0B3D;
-}
-
-/* Address Form Styling */
-#address-form {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #fff;
+    gap: 40px;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(to right, #A84DCF, #C19AED);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .hero-subtitle {
+    text-align: center;
+    font-size: 1.125rem;
+    color: #666;
+    margin-top: 8px;
+  }
+  
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .card input[type="text"] {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-}
-
-#addressInput {
-    padding: 8px;
-    font-size: 16px;
-    width: 250px;
-    margin-right: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#searchButton {
-    padding: 8px 16px;
+    margin-bottom: 16px;
+    transition: border 0.3s ease;
+  }
+  
+  .card input[type="text"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
     font-size: 16px;
-    background-color: #A84DCF;
+    background-color: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
-}
-
-#searchButton:hover {
-    background-color: #2B0B3D;
-}
-
-/* Radius Selection Styling */
-#radius {
-    margin-top: 15px;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.dropdown {
+    transition: all 0.3s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
+  }
+  
+  .radius-wrapper {
+    margin-top: 20px;
+    transition: opacity 0.3s ease;
+    visibility: hidden;
+    opacity: 0;
+  }
+  
+  .radius-wrapper.visible {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .dropdown {
     position: relative;
-    width: 150px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
+    background: #fff;
     cursor: pointer;
-    background-color: #fff;
-}
-
-.dropdown.disabled {
+    padding: 14px;
+    font-size: 16px;
+  }
+  
+  .dropdown.disabled {
     opacity: 0.6;
     pointer-events: none;
-}
-
-.dropdown-selected {
-    padding: 8px;
-    font-size: 16px;
-}
-
-.dropdown-options {
-    display: none;
+  }
+  
+  .dropdown-options {
     position: absolute;
     top: 100%;
     left: 0;
@@ -86,25 +119,30 @@ body {
     border: 1px solid #ccc;
     border-top: none;
     z-index: 1000;
-}
-
-.dropdown-option {
-    padding: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.dropdown-option:hover {
-    background-color: #f0f8ff;
-}
-
-/* Map Styling */
-#map {
-    height: 75vh;
-    width: 90%;
-    margin-top: 20px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    box-sizing: border-box;
-}
+    display: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  .dropdown-option {
+    padding: 12px;
+    transition: background 0.3s;
+  }
+  
+  .dropdown-option:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  #map {
+    height: 70vh;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  }
+  
+  @media screen and (max-width: 600px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+  }

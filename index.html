@@ -1,42 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Radius Visualizer</title>
-    
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Radius Visualizer</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!--Address input form-->
-    <div id="address-form">
-        <input type="text" id="addressInput" placeholder="Enter address">
-        <button id="searchButton">Submit</button>
+  <main>
+    <div>
+      <h1 class="hero-title">Cars Social Visualizer</h1>
+      <p class="hero-subtitle">From protecting your backyard to conquesting new territories, Cars Social™ allows you to target multiple pinpoint locations — like your competitor’s address — and the surrounding radius to win market share.</p>
     </div>
 
-    <!--Radius selection dropdown-->
-    <div id="radius" class="custom-dropdown">
-        <label for="radiusSelect">Radius:</label>
-        <div id="radiusSelect" class="dropdown disabled"> 
-            <div class="dropdown-selected">Select Radius</div>
-            <div class="dropdown-options">
-                <div class="dropdown-option" data-value="15">15 Miles</div>
-                <div class="dropdown-option" data-value="30">30 Miles</div>
-            </div>
+    <div class="card">
+      <input type="text" id="addressInput" placeholder="Enter address">
+      <button id="searchButton">Search Address</button>
+
+      <div class="radius-wrapper" id="radius">
+        <div class="dropdown disabled" id="radiusSelect">
+          <div class="dropdown-selected">Select Cars Social Type</div>
+          <div class="dropdown-options">
+            <div class="dropdown-option" data-value="15">Small</div>
+            <div class="dropdown-option" data-value="30">Large</div>
+          </div>
         </div>
-    </div>    
+      </div>
+    </div>
 
-    <!-- Map container -->
     <div id="map"></div>
+  </main>
 
-    <!-- Leaflet JS -->
-    <script src="node_modules/leaflet/dist/leaflet.js"></script>
-
-    <!-- Custom JS -->
-    <script src="leaflet.js"></script>
+  <!-- Leaflet JS -->
+  <script src="node_modules/leaflet/dist/leaflet.js"></script>
+  <!-- Custom JS -->
+  <script src="RadiusVisualizer.js"></script>
 </body>
 </html>

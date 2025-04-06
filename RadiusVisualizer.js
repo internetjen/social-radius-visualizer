@@ -15,20 +15,6 @@ document.getElementById('searchButton').addEventListener('click', function() { /
     geocodeAddress(address) //Calls function with user's address input as parameters
 });
 
-// //Radius select function
-// document.getElementById('radiusSelect').addEventListener('change', function(){
-//     if (lat && lon) { //Checks if address is input before changing radius
-//     const radius = this.value; //Get selected radius from dropdown
-//     if (radius) {
-//         drawCircle(lat, lon, radius); //Draw circle with selected radius
-//     } else {
-//         alert("Please select a radius.");
-//     }
-// } else {
-//     alert("Please search for an address first.");
-//     }
-// });
-
 //Geocoding function
 function geocodeAddress(address) { 
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`; //Constructs a URL to call the Nominatim API, passing the address as a query.
@@ -58,7 +44,12 @@ function geocodeAddress(address) {
                 .addTo(map)
                 .bindPopup(`<b>${address}</b>`); 
 
+            //Show radius dropdown after successful address search
+            document.getElementById('radius').style.visibility = 'visible';
+            document.getElementById('radius').style.opacity = '1'
+
             enableCustomDropdown();
+
         }, 2000); // Matches duration of flyTo effect
 
     } else {
@@ -98,7 +89,7 @@ const optionItems = dropdown.querySelectorAll('.dropdown-option');
 
 function enableCustomDropdown() {
     dropdown.classList.remove('disabled');
-    selected.innerText = 'Select Radius'
+    selected.innerText = 'Select Cars Social Type'
     selected.setAttribute('data-value', '')
 }
 
@@ -119,7 +110,7 @@ optionItems.forEach(option => {
 
         if (!lat || ! lon) {
             alert("Please search for an address first.");
-            selected.innerText= 'Select Radius';
+            selected.innerText= 'Select Cars Social Type';
             selected.setAttribute('data-value', '');
             return;
         }
