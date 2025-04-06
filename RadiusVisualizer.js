@@ -87,13 +87,29 @@ function drawCircle(lat, lon, miles) {
 
     const radiusInMeters = miles * 1609.34 //Convert miles to meters (1 mile = 1609.34 meters)
 
-    //Add circle to map
+    //Add styled circle to map
     currentCircle = L.circle([lat,lon], {
-        color: 'blue',
-        fillColor: '#30f',
-        fillOpacity: 0.3,
+        color: '#A84DCF',
+        fillColor: '#A84DCF',
+        fillOpacity: 0.25,
         radius: radiusInMeters //Radius in meters
-    }).addTo(map).bindPopup(`${miles} mile radius`).openPopup();
+    }).addTo(map);
+
+    //Add custom marker to circle
+    const labelMarker = L.marker([lat, lon], {
+        icon: purpleMarkerIcon
+    }).addTo(map);
+
+    //Add custom popup label
+    labelMarker.bindPopup(`
+        <div class="marker-popup">
+        <strong>${document.getElementById('addressInput').value}</strong><br>
+        <span>${miles}mi</span>
+        </div>
+        `).openPopup();
+    
+    // Store marker so we can remove on next draw if needed
+    map._labelMarker = labelMarker;
 }
 
 //Custom dropdown handling
