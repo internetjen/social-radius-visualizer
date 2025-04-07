@@ -130,7 +130,7 @@ const optionItems = dropdown.querySelectorAll('.dropdown-option');
 
 function enableCustomDropdown() {
     dropdown.classList.remove('disabled');
-    selected.innerText = 'Select Cars Social Type'
+    selected.innerText = 'Select One'
     selected.dataset.value = '';
 }
 
