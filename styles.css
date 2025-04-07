@@ -1,200 +1,239 @@
 :root {
-    --primary-color: #A84DCF;
-    --secondary-color: #3D1B5B;
-    --background-color: #f9f9f9;
-    --text-color: #333;
-  }
-  
-  * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-  }
-  
-  main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-  }
-  
+  --primary-color: #A84DCF;
+  --secondary-color: #3D1B5B;
+  --background-color: #f9f9f9;
+  --text-color: #333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(to right, #A84DCF, #C19AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  text-align: center;
+  font-size: 1.125rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 500px;
+}
+
+.card input[type="text"] {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 16px;
+  transition: border 0.3s ease;
+}
+
+.card input[type="text"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
+}
+
+.radius-wrapper {
+  margin-top: 20px;
+  transition: opacity 0.3s ease;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.radius-wrapper.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.dropdown {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  padding: 14px;
+  font-size: 16px;
+}
+
+.dropdown.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 1000;
+  display: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.dropdown-option {
+  padding: 12px;
+  transition: background 0.3s;
+}
+
+.dropdown-option:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+#map {
+  height: 70vh;
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+}
+
+@media screen and (max-width: 600px) {
   .hero-title {
-    font-size: 3rem;
-    font-weight: 700;
-    text-align: center;
-    background: linear-gradient(to right, #A84DCF, #C19AED);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 2rem;
   }
-  
-  .hero-subtitle {
-    text-align: center;
-    font-size: 1.125rem;
-    color: #666;
-    margin-top: 8px;
-  }
-  
-  .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
-    width: 100%;
-    max-width: 500px;
-  }
-  
-  .card input[type="text"] {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 16px;
-    transition: border 0.3s ease;
-  }
-  
-  .card input[type="text"]:focus {
-    border-color: var(--primary-color);
-    outline: none;
-  }
-  
-  button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
-  }
-  
-  .radius-wrapper {
-    margin-top: 20px;
-    transition: opacity 0.3s ease;
-    visibility: hidden;
-    opacity: 0;
-  }
-  
-  .radius-wrapper.visible {
-    visibility: visible;
-    opacity: 1;
-  }
-  
-  .dropdown {
-    position: relative;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    padding: 14px;
-    font-size: 16px;
-  }
-  
-  .dropdown.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-  }
-  
-  .dropdown-options {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-top: none;
-    z-index: 1000;
-    display: none;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  }
-  
-  .dropdown-option {
-    padding: 12px;
-    transition: background 0.3s;
-  }
-  
-  .dropdown-option:hover {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  #map {
-    height: 70vh;
-    width: 100%;
-    border-radius: 16px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-  }
-  
-  @media screen and (max-width: 600px) {
-    .hero-title {
-      font-size: 2rem;
-    }
-  }
-  
-  /* Marker Icon Container */
-  .custom-marker {
-    position: relative;
-    width: 30px;
-    height: 42px;
-  }
-  
-  /* Floating Label for Radius Circle */
-  .custom-label .label-badge {
-    background: #A84DCF;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    font-family: 'Arial', sans-serif;
-    pointer-events: none;
-  }
-  
-  /* Clear All Button */
-  .clear-wrapper {
-    margin-top: 20px;
-    transition: opacity 0.3s ease;
-    visibility: hidden;
-    opacity: 0;
-    width: 100%;
-    max-width: 500px;
-  }
-  
-  .clear-wrapper.visible {
-    visibility: visible;
-    opacity: 1;
-  }
-  
-  #clearAll {
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    border-radius: 999px;
-    padding: 12px;
-    font-size: 16px;
-    width: 100%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  #clearAll:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
-  }  
+}
+
+/* === Custom Marker Pin === */
+.custom-marker .pin-wrapper {
+  position: relative;
+  width: 30px;
+  height: 42px;
+}
+
+.custom-marker .pin-circle {
+  width: 30px;
+  height: 30px;
+  background-color: #7C3AED;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.custom-marker .pin-inner {
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 9px;
+  left: 9px;
+}
+
+/* === Custom Floating Label === */
+.custom-label .label-badge {
+  background-color: #7C3AED;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  white-space: nowrap;
+  position: relative;
+  top: -10px;
+  left: 20px;
+}
+
+.custom-label .label-badge::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid #7C3AED;
+}
+
+/* Clear All Button */
+.clear-wrapper {
+  margin-top: 20px;
+  transition: opacity 0.3s ease;
+  visibility: hidden;
+  opacity: 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+.clear-wrapper.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+#clearAll {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#clearAll:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
+}
+
+.zoom-scale-marker, .zoom-scale-label {
+  transition: transform 0.2s ease;
+}

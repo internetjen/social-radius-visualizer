@@ -1,30 +1,30 @@
-const circles = []; // store all drawn circles
-const labelMarker = []; // store all label markers
-const allAddressMarkers = [];
-const allAddressData = []; // Stores { address, lat, lon }
-
 // Initialize map
 const map = L.map('map').setView([39.8283, -98.5795], 5); // Set initial zoom and coordinates
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+map.on('zoom', updateMarkerLabelScale);
+map.on('zoomend', updateMarkerLabelScale); // more precise control
+
+
 // Storage
 const addressMap = new Map(); // { address: { lat, lon, radius, circle, label } }
 
-var lat, lon //Variable to store lat/lon of searched address
-
 // Marker icon
 const purpleMarkerIcon = L.divIcon({
-    className: 'custom-marker',
+    className: '',
     html: `
-        <div class="pin-wrapper">
-            <div class="pin-circle"></div>
-            <div class="pin-inner"></div>
+        <div class="custom-marker zoom-scale-marker">
+                <div class="pin-wrapper">
+                    <div class="pin-circle">
+                    <div class="pin-inner"></div>
+                </div>
+            </div>
         </div>
     `,
     iconSize: [30, 42],
-    iconAnchor: [15, 42],
+    iconAnchor: [15, 42], // bottom center of the pin
 });
 
 // Address Search Handler
@@ -51,30 +51,34 @@ function geocodeAddress(address) {
 
         //Add marker of searched location
         setTimeout(() => {
-            //Remove previous search marker if exists
-            if (map._marker) {
-                map.removeLayer(map._marker);
+            // Create a new marker for this address
+            const addressMarker = L.marker([lat, lon], {icon: purpleMarkerIcon}).addTo(map);
+            
+            // Remove existing marker for this address if it exists
+            if (addressMap.has(address)) {
+                const oldData = addressMap.get(address);
+                if (oldData.marker) map.removeLayer(oldData.marker);
             }
 
-            map._marker = L.marker([lat, lon], {icon: purpleMarkerIcon})
-                .addTo(map)
-                .bindPopup(`
-                    <div class="marker-popup">
-                    <strong>${address}</strong><br>
-                    </div>
-                `).openPopup(); 
-
-            //Show radius dropdown after successful address search
-            // Store address and location
+            // Store this address and marker in the addressMap
+            addressMap.set(address, {
+                lat,
+                lon,
+                radius: null,
+                marker: addressMarker,
+                circle: null,
+                label: null
+            });
+            
+            //Show radius dropdown
             const radiusWrapper = document.getElementById('radius');
-            radiusWrapper.style.visibility = 'visible';
-            radiusWrapper.style.opacity = '1';
+            radiusWrapper.classList.add('visible');
             radiusWrapper.dataset.address = address;
             radiusWrapper.dataset.lat = lat;
             radiusWrapper.dataset.lon = lon;
 
             enableCustomDropdown();
-
+            updateMarkerLabelScale();
         }, 2000); // Matches duration of flyTo effect
         //Catches and logs any network or fetch-related errors, then shows an alert.
     })
@@ -96,22 +100,28 @@ function drawCircle(lat, lon, miles, label = null) {
         radius: radiusInMeters //Radius in meters
     }).addTo(map);
 
-    //Floating label using L.divIcon
+    // Custom label (banner to the right of the pin)
     const labelMarker = L.marker([lat, lon], {
         icon: L.divIcon({
-            className: 'custom-label',
+            className: '',
             html: `
-                <div class="label-badge">
-                    <strong>${label}</strong></br>
-                    ${miles}mi
-                </div>
+                    <div class="custom-label zoom-scale-label">
+                        ${label ? `
+                                <div>
+                                <strong>${label}</strong><br>
+                                <span class="miles">${miles}mi</span>
+                                </div>
+                                ` : '' 
+                            }
+                    </div>
                 `,
-                iconSize: [100, 40],  // Label size
-                iconAnchor: [-10, -50],  // Position of label relative to pin
+                iconSize: [120, 40],  //  Size of banner box
+                iconAnchor: [-60, 20],  // Position it to the right of the pin
         }),
         interactive: false // Prevents from being clicked 
     }).addTo(map);
 
+    updateMarkerLabelScale();
     return { circle, label: labelMarker }
 }
 
@@ -158,18 +168,25 @@ optionItems.forEach(option => {
         selected.dataset.value = value;
         options.style.display = 'none';
 
-
-        //Remove existing circle/label
         if (addressMap.has(address)) {
-            const { circle, label} =  addressMap.get(address);
-            map.removeLayer(circle);
-            map.removeLayer(label)
-        }
+            const oldData = addressMap.get(address);
+            
+            // Remove existing circle and label if they exist
+            if (oldData.circle) map.removeLayer(oldData.circle);
+            if (oldData.label) map.removeLayer(oldData.label);
+        
+            // Draw new circle/label
+            const { circle, label } = drawCircle(lat, lon, value, address);
+        
+            // Update that entry with new radius, circle, and label — keep existing marker
+            addressMap.set(address, {
+                ...oldData,
+                radius: value,
+                circle,
+                label
+            });
+        }        
 
-        //Draw new circle/label
-        const newData = drawCircle(lat, lon, value, address);
-        addressMap.set(address, { lat, lon, radius: value, ...newData});
-       
         // Show clear all button
         document.getElementById('clearWrapper').classList.add('visible');
     });
@@ -184,18 +201,13 @@ document.addEventListener('click', e => {
 
 //Clear all button
 document.getElementById('clearAll').addEventListener('click', () => {
-    //Remove radius circles and labels
-    addressMap.forEach(({circle, label}) => {
-        map.removeLayer(circle);
-        map.removeLayer(label);
+    //Remove ALL markers, circles, and labels
+    addressMap.forEach(({marker, circle, label}) => {
+        if (marker) map.removeLayer(marker);
+        if (circle) map.removeLayer(circle);
+        if (label) map.removeLayer(label);
     });
     addressMap.clear();
-
-    // Remove the searched marker
-    if (map._marker) {
-        map.removeLayer(map._marker);
-        delete map._marker;
-    }
 
     // Reset UI
     const radius = document.getElementById('radius');
@@ -206,3 +218,23 @@ document.getElementById('clearAll').addEventListener('click', () => {
     selected.dataset.value = '';
     document.getElementById('clearWrapper').classList.remove('visible')
 });
+
+//Update scale based on zoom
+function updateMarkerLabelScale() {
+    const zoom = map.getZoom();
+    const scale = Math.pow(0.9, 10 - zoom); // Adjust exponent base for faster/slower scaling
+  
+    const markers = document.querySelectorAll('.zoom-scale-marker');
+    const labels = document.querySelectorAll('.zoom-scale-label');
+  
+    markers.forEach(marker => {
+      marker.style.transform = `scale(${scale})`;
+      marker.style.transformOrigin = 'bottom center';
+    });
+  
+    labels.forEach(label => {
+      label.style.transform = `scale(${scale})`;
+      label.style.transformOrigin = 'left center';
+    });
+  }
+  
