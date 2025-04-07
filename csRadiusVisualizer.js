@@ -14,15 +14,15 @@ function createLabeledPinIcon(address, miles) {
   return L.divIcon({
     className: '',
     html: `
-        <div class="marker-container zoom-scale-marker">
-        <div class="custom-label zoom-scale-label">
+        <div class="marker-container zoom-scale-marker"">
+        <div class="custom-label zoom-scale-label" data-address="${address}">
             <div><strong>${address}</strong></div>
             <div class="subtext">${miles ? miles + ' mi radius' : ''}</div>
         </div>
         </div>
     `,
     iconSize: [100, 80],
-    iconAnchor: [50, 75],
+    iconAnchor: [50, 30], 
   });
 }
 
@@ -89,9 +89,9 @@ function drawCircle(lat, lon, miles, address = null) {
   const radiusInMeters = miles * 1609.34;
 
   const circle = L.circle([lat, lon], {
-    color: '#A84DCF',
-    fillColor: '#A84DCF',
-    fillOpacity: 0.25,
+    color: '#3D1B5B',
+    fillColor: '#3D1B5B',
+    fillOpacity: 0.15,
     radius: radiusInMeters
   }).addTo(map);
 
@@ -202,3 +202,29 @@ function updateMarkerLabelScale() {
     label.style.transformOrigin = 'left center';
   });
 }
+
+// Handle clicking a label to change radius
+map.on('click', (e) => {
+    const label = e.originalEvent.target.closest('.custom-label');
+    if (!label) return;
+  
+    const address = label.dataset.address;
+    const data = addressMap.get(address);
+    if (!data) return;
+
+    //Update input field
+    document.getElementById('addressInput').value = address;
+  
+    // Populate the radius UI with this address
+    const radiusUI = document.getElementById('radius');
+    radiusUI.classList.add('visible');
+    radiusUI.dataset.address = address;
+    radiusUI.dataset.lat = data.lat;
+    radiusUI.dataset.lon = data.lon;
+  
+    enableCustomDropdown();
+  
+    // Scroll to dropdown (optional, if sidebar is long)
+    document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
+  });
+  
