@@ -1,3 +1,11 @@
+const circles = []; // store all drawn circles
+const labelMarker = []; // store all label markers
+const allAddressMarkers = [];
+const allAddressData = []; // Stores { address, lat, lon }
+
+const addressMap = new Map(); // { address: { marker, circle, radius } }
+
+
 var map = L.map('map').setView([39.8283, -98.5795], 5); // Set initial zoom and coordinates
 
 // Add a tile layer (credit: OpenStreetMap)
@@ -5,7 +13,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var currentCircle //Variable for current circle which can be removed/updated
 var lat, lon //Variable to store lat/lon of searched address
 
 //This script allows a user to type an address into a search box, click search, and retrieve the latitude and longitude of that address using the Nominatim API
@@ -33,13 +40,10 @@ function geocodeAddress(address) {
     fetch(url) //Uses the fetch() function to call the API.
     .then(response => response.json()) // Converts the response to JSON.
     .then(data => {
-        console.log(data); //Logs the data to the console so you can inspect what was returned.
-
         if (data.length > 0) { //Checks if any results were returned
         //Set global lat variable with value from geocode response
          lat = parseFloat(data[0].lat); // Pulls the Lat/Lon from the first result (data[0]) and converts Lat string to number
          lon = parseFloat(data[0].lon); // Pulls the Lat/Lon from the first result (data[0]) and converts Lon string to number
-        console.log(`Latitude: ${lat}, Longitude: ${lon}`); //Logs the coordinates to the console
 
         //Fly to and zoom into searched location
         map.flyTo([lat, lon], 10, {
@@ -60,8 +64,12 @@ function geocodeAddress(address) {
                 `).openPopup(); 
 
             //Show radius dropdown after successful address search
+            // Store address and location
             document.getElementById('radius').style.visibility = 'visible';
             document.getElementById('radius').style.opacity = '1'
+            document.getElementById('radius').setAttribute('data-address', address);
+            document.getElementById('radius').setAttribute('data-lat', lat);
+            document.getElementById('radius').setAttribute('data-lon', lon);
 
             enableCustomDropdown();
 
@@ -80,36 +88,32 @@ function geocodeAddress(address) {
 }
 
 //Draw circle radius round searched location
-function drawCircle(lat, lon, miles) {
-    if (currentCircle){ //Remove circle if one already exists
-        map.removeLayer(currentCircle);
-    }
-
+function drawCircle(lat, lon, miles, label = null) {
     const radiusInMeters = miles * 1609.34 //Convert miles to meters (1 mile = 1609.34 meters)
 
-    //Add styled circle to map
-    currentCircle = L.circle([lat,lon], {
+    //Draw radius circle on map
+    const circle = L.circle([lat,lon], {
         color: '#A84DCF',
         fillColor: '#A84DCF',
         fillOpacity: 0.25,
         radius: radiusInMeters //Radius in meters
     }).addTo(map);
+    circles.push(circle); //store for future clearing
 
-    //Add custom marker to circle
-    const labelMarker = L.marker([lat, lon], {
+    //Offset label abvoe circle
+    const offsetLat = lat + (miles / 69); // ~1 degree latitude = 69 miles
+    const marker = L.marker([offsetLat, lon], {
         icon: purpleMarkerIcon
     }).addTo(map);
 
-    //Add custom popup label
-    labelMarker.bindPopup(`
+    marker.bindPopup(`
         <div class="marker-popup">
-        <strong>${document.getElementById('addressInput').value}</strong><br>
-        <span>${miles}mi</span>
+            <strong>${label}</strong><br>
+            <span>${miles}mi</span>
         </div>
         `).openPopup();
-    
-    // Store marker so we can remove on next draw if needed
-    map._labelMarker = labelMarker;
+
+    return { circle, label: marker }
 }
 
 //Custom dropdown handling
@@ -136,10 +140,14 @@ selected.addEventListener('click', () => {
 //Option selection
 optionItems.forEach(option => {
     option.addEventListener('click', () => {
-        const value = option.getAttribute('data-value');
+        const value = parseInt(option.getAttribute('data-value'));
         const text = option.innerText;
 
-        if (!lat || ! lon) {
+        const address = document.getElementById('radius').getAttribute('data-address');
+        const lat = parseFloat(document.getElementById('radius').getAttribute('data-lat'));
+        const lon = parseFloat(document.getElementById('radius').getAttribute('data-lon'));
+    
+        if (!address || isNaN(lat) || isNaN(lon)) {
             alert("Please search for an address first.");
             selected.innerText= 'Select Cars Social Type';
             selected.setAttribute('data-value', '');
@@ -150,7 +158,22 @@ optionItems.forEach(option => {
         selected.setAttribute('data-value', value);
         options.style.display = 'none';
 
-        drawCircle(lat, lon, value);
+
+        //Remove circle for this address if exists
+        if (addressMap.has(address)) {
+            const existing =  addressMap.get(address);
+            map.removeLayer(existing.circle);
+            map.removeLayer(existing.label)
+        }
+
+        //Draw new circle
+        const circle = drawCircle(lat, lon, value, address);
+
+        addressMap.set(address, { lat, lon, radius: value, circle: circle.circle, label: circle.label});
+       
+        // Show clear all button
+        document.getElementById('clearWrapper').classList.add('visible');
+
     });
 });
 
@@ -160,3 +183,31 @@ document.addEventListener('click', (e) => {
         options.style.display = 'none';
     }
 });
+
+//Clear all button
+document.getElementById('clearAll').addEventListener('click', () => {
+    //Remove radius circles and labels
+    addressMap.forEach(({circle, label}) => {
+        map.removeLayer(circle);
+        map.removeLayer(label);
+    });
+    addressMap.clear();
+
+    // Remove the searched marker
+    if (map._marker) {
+        map.removeLayer(map._marker);
+        delete map._marker;
+    }
+
+    // Hide and reset the dropdown
+    document.getElementById('radius').style.visibility = 'hidden';
+    document.getElementById('radius').style.opacity = '0';
+    dropdown.classList.add('disabled');
+    selected.innerText = 'Select Cars Social Type';
+    selected.setAttribute('data-value', '');
+
+    // Hide clear button
+    document.getElementById('clearWrapper').classList.remove('visible')
+});
+
+
