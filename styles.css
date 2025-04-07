@@ -153,6 +153,11 @@ button:hover {
   transition: background 0.3s;
 }
 
+.dropdown-option.active-option {
+  background-color: #eee;
+  font-weight: bold;
+}
+
 .dropdown-option:hover {
   background-color: var(--primary-color);
   color: white;

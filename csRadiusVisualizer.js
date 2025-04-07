@@ -213,9 +213,11 @@ map.on('click', (e) => {
     if (!data) return;
 
     //Update input field
-    document.getElementById('addressInput').value = address;
+    const input = document.getElementById('addressInput');
+    input.value = address;
+    input.focus();
   
-    // Populate the radius UI with this address
+    // Update radius UI
     const radiusUI = document.getElementById('radius');
     radiusUI.classList.add('visible');
     radiusUI.dataset.address = address;
@@ -223,8 +225,44 @@ map.on('click', (e) => {
     radiusUI.dataset.lon = data.lon;
   
     enableCustomDropdown();
+
+    // Update dropdown selection
+    const currentRadius = data.radius;
+    if (currentRadius) {
+        selected.innerText = `${currentRadius} mi radius`;
+        selected.dataset.value = currentRadius;
+
+        optionItems.forEach(option => {
+            if (parseInt(option.dataset.value) === currentRadius) {
+                option.classList.add('active-option');
+            } else {
+                option.classList.remove('active-option');
+            }
+        });
+    } else {
+        selected.innerText = 'Select Cars Social Type';
+        selected.dataset.value = '';
+    }
   
-    // Scroll to dropdown (optional, if sidebar is long)
+    // Scroll to dropdown into view
     document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
   });
   
+  const currentRadius = data.radius;
+
+if (currentRadius) {
+  selected.innerText = `${currentRadius} mi radius`;
+  selected.dataset.value = currentRadius;
+
+  // Visually highlight the selected option
+  optionItems.forEach(option => {
+    if (parseInt(option.dataset.value) === currentRadius) {
+      option.classList.add('active-option'); // you can define this class
+    } else {
+      option.classList.remove('active-option');
+    }
+  });
+} else {
+  selected.innerText = 'Select Cars Social Type';
+  selected.dataset.value = '';
+}
