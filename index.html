@@ -12,40 +12,45 @@
 </head>
 
 <body>
-  <main>
-    <!-- Header Section -->
-    <header>
-      <h1 class="hero-title">Cars Social Visualizer</h1>
-      <p class="hero-subtitle">
-        From protecting your backyard to conquesting new territories, Cars Social™ allows you to target multiple pinpoint locations —
-        like your competitor’s address — and the surrounding radius to win market share.
-      </p>
-    </header>
+  <main class="app-container">
+    <!-- Left Panel -->
+    <div class="sidebar">
+      <header>
+        <h1 class="hero-title">Cars Social Visualizer</h1>
+        <p class="hero-subtitle">
+          Visualize any address and its market radius to find growth opportunities.
+        </p>
+      </header>
 
-    <!-- Search Card -->
-    <section class="card">
-      <input type="text" id="addressInput" placeholder="Enter address" />
-      <button id="searchButton">Search Address</button>
+      <section class="card">
+        <!-- Address Input -->
+        <label for="addressInput" class="label">Enter Address:</label>
+        <input type="text" id="addressInput" placeholder="e.g. 123 Main St" />
 
-      <!-- Radius Dropdown -->
-      <div class="radius-wrapper" id="radius">
-        <div class="dropdown disabled" id="radiusSelect">
-          <div class="dropdown-selected">Select Cars Social Type</div>
-          <div class="dropdown-options">
-            <div class="dropdown-option" data-value="15">Small</div>
-            <div class="dropdown-option" data-value="30">Large</div>
+        <!-- Search Button -->
+        <button id="searchButton">Search Address</button>
+
+        <!-- Radius Dropdown -->
+        <div class="radius-wrapper" id="radius">
+          <label class="label" for="radiusSelect">Select Cars Social Type:</label>
+          <div class="dropdown disabled" id="radiusSelect">
+            <div class="dropdown-selected">Select Cars Social Type</div>
+            <div class="dropdown-options">
+              <div class="dropdown-option" data-value="15">Small - 15 mi</div>
+              <div class="dropdown-option" data-value="30">Large - 30 mi</div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Map Container -->
-    <section id="map"></section>
-
-    <!-- Clear All Button -->
-    <div class="clear-wrapper" id="clearWrapper">
-      <button id="clearAll">Clear All</button>
+        <!-- Clear All Button -->
+        <div class="clear-wrapper" id="clearWrapper">
+          <button id="clearAll">Clear All</button>
+        </div>
+      </section>
     </div>
+
+    <!-- Map Panel -->
+    <div id="map"></div>
   </main>
 
   <!-- Scripts -->

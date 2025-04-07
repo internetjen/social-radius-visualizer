@@ -9,46 +9,68 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
+  height: 100%;
   margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow: hidden;
 }
 
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* === Sidebar (Left Panel) === */
+.sidebar {
+  width: 400px;
+  max-width: 100%;
+  padding: 32px 24px;
+  background-color: #fff;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 40px;
+  justify-content: flex-start;
+  gap: 24px;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
 }
 
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+/* === Header === */
 .hero-title {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
   background: linear-gradient(to right, #A84DCF, #C19AED);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin: 0;
 }
 
 .hero-subtitle {
-  text-align: center;
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: #666;
   margin-top: 8px;
+  line-height: 1.5;
 }
 
+/* === Card === */
 .card {
   background: #fff;
   border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  padding: 0;
+  box-shadow: none;
   width: 100%;
-  max-width: 500px;
 }
 
 .card input[type="text"] {
@@ -66,6 +88,7 @@ main {
   outline: none;
 }
 
+/* === Buttons === */
 button {
   width: 100%;
   padding: 12px;
@@ -83,6 +106,7 @@ button:hover {
   box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
 }
 
+/* === Radius Dropdown === */
 .radius-wrapper {
   margin-top: 20px;
   transition: opacity 0.3s ease;
@@ -134,17 +158,44 @@ button:hover {
   color: white;
 }
 
+/* === Map === */
 #map {
-  height: 70vh;
+  flex: 1;
+  height: 100%;
   width: 100%;
-  border-radius: 16px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  border-radius: 0;
+  box-shadow: none;
 }
 
-@media screen and (max-width: 600px) {
-  .hero-title {
-    font-size: 2rem;
-  }
+/* === Clear All Button === */
+.clear-wrapper {
+  margin-top: 20px;
+  transition: opacity 0.3s ease;
+  visibility: hidden;
+  opacity: 0;
+  width: 100%;
+}
+
+.clear-wrapper.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+#clearAll {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#clearAll:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
 }
 
 /* === Custom Marker Pin === */
@@ -202,38 +253,28 @@ button:hover {
   border-right: 6px solid #7C3AED;
 }
 
-/* Clear All Button */
-.clear-wrapper {
-  margin-top: 20px;
-  transition: opacity 0.3s ease;
-  visibility: hidden;
-  opacity: 0;
-  width: 100%;
-  max-width: 500px;
-}
-
-.clear-wrapper.visible {
-  visibility: visible;
-  opacity: 1;
-}
-
-#clearAll {
-  background-color: var(--primary-color);
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 12px;
-  font-size: 16px;
-  width: 100%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#clearAll:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
-}
-
+/* === Zoom Scaling (for markers/labels if needed) === */
 .zoom-scale-marker, .zoom-scale-label {
   transition: transform 0.2s ease;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+  }
+
+  #map {
+    height: 50vh;
+  }
+
+  .hero-title {
+    font-size: 1.6rem;
+  }
 }
