@@ -120,7 +120,7 @@ const optionItems = dropdown.querySelectorAll('.dropdown-option');
 
 function enableCustomDropdown() {
   dropdown.classList.remove('disabled');
-  selected.innerText = 'Select Cars Social Type';
+  selected.innerText = 'Choose One';
   selected.dataset.value = '';
 }
 
@@ -144,7 +144,7 @@ optionItems.forEach(option => {
 
     if (!address || isNaN(lat) || isNaN(lon)) {
       alert("Please search for an address first.");
-      selected.innerText = 'Select Cars Social Type';
+      selected.innerText = 'Choose One';
       selected.dataset.value = '';
       return;
     }
@@ -186,7 +186,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
   const radius = document.getElementById('radius');
   radius.classList.remove('visible');
   dropdown.classList.add('disabled');
-  selected.innerText = 'Select Cars Social Type';
+  selected.innerText = 'Choose One';
   selected.dataset.value = '';
   document.getElementById('clearWrapper').classList.remove('visible');
 });
@@ -247,7 +247,7 @@ map.on('click', (e) => {
             }
         });
     } else {
-        selected.innerText = 'Select Cars Social Type';
+        selected.innerText = 'Choose One';
         selected.dataset.value = '';
     }
   
@@ -270,6 +270,6 @@ if (currentRadius) {
     }
   });
 } else {
-  selected.innerText = 'Select Cars Social Type';
+  selected.innerText = 'Choose One';
   selected.dataset.value = '';
 }
