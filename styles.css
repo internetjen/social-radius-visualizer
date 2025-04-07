@@ -40,7 +40,7 @@ html, body {
 
 .label {
   display: block;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 6px;
   color: #444;
@@ -199,6 +199,7 @@ button:hover {
 }
 
 /* === Custom Marker Pin === */
+
 .custom-marker .pin-wrapper {
   position: relative;
   width: 30px;
@@ -213,6 +214,8 @@ button:hover {
   position: absolute;
   top: 0;
   left: 0;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #A84DCF;
 }
 
 .custom-marker .pin-inner {
@@ -226,35 +229,59 @@ button:hover {
 }
 
 /* === Custom Floating Label === */
-.custom-label .label-badge {
-  background-color: #7C3AED;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  white-space: nowrap;
+.marker-container {
   position: relative;
-  top: -10px;
-  left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.custom-label .label-badge::after {
+.custom-label {
+  position: absolute;
+  left: 50%; 
+  top: -40%;
+  transform: translateX(-50%);
+  background-color: #A84DCF;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.subtext {
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+
+.custom-label div {
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Pointer arrow */
+.custom-label::after {
   content: "";
   position: absolute;
   top: 50%;
-  left: -6px;
+  left: -8px;
   transform: translateY(-50%);
   width: 0;
   height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-right: 6px solid #7C3AED;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 9px solid #A84DCF;
 }
 
-/* === Zoom Scaling (for markers/labels if needed) === */
-.zoom-scale-marker, .zoom-scale-label {
+/* === Marker & Label Scaling === */
+.zoom-scale-marker,
+.zoom-scale-label {
   transition: transform 0.2s ease;
 }
 
