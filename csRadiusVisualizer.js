@@ -9,6 +9,13 @@ map.on('zoomend', updateMarkerLabelScale);
 // Storage
 const addressMap = new Map(); // { address: { lat, lon, radius, circle, marker } }
 
+// Radius labels
+const radiusLabels = {
+    15: 'Small - 15 mi',
+    30: 'Large - 30 mi'
+  };
+  
+
 // Create labeled pin icon
 function createLabeledPinIcon(address, miles) {
   return L.divIcon({
@@ -17,7 +24,7 @@ function createLabeledPinIcon(address, miles) {
         <div class="marker-container zoom-scale-marker"">
         <div class="custom-label zoom-scale-label" data-address="${address}">
             <div><strong>${address}</strong></div>
-            <div class="subtext">${miles ? miles + ' mi radius' : ''}</div>
+            <div class="subtext">${radiusLabels[miles] || ''}</div>
         </div>
         </div>
     `,
@@ -142,7 +149,7 @@ optionItems.forEach(option => {
       return;
     }
 
-    selected.innerText = text;
+    selected.innerText = radiusLabels[value] || `${value} mi radius`;
     selected.dataset.value = value;
     options.style.display = 'none';
 
@@ -229,7 +236,7 @@ map.on('click', (e) => {
     // Update dropdown selection
     const currentRadius = data.radius;
     if (currentRadius) {
-        selected.innerText = `${currentRadius} mi radius`;
+        selected.innerText = radiusLabels[currentRadius] || `${currentRadius} mi radius`;
         selected.dataset.value = currentRadius;
 
         optionItems.forEach(option => {
@@ -257,7 +264,7 @@ if (currentRadius) {
   // Visually highlight the selected option
   optionItems.forEach(option => {
     if (parseInt(option.dataset.value) === currentRadius) {
-      option.classList.add('active-option'); // you can define this class
+      option.classList.add('active-option'); 
     } else {
       option.classList.remove('active-option');
     }
