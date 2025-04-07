@@ -11,21 +11,30 @@ map.on('zoomend', updateMarkerLabelScale); // more precise control
 // Storage
 const addressMap = new Map(); // { address: { lat, lon, radius, circle, label } }
 
-// Marker icon
-const purpleMarkerIcon = L.divIcon({
-    className: '',
-    html: `
-        <div class="custom-marker zoom-scale-marker">
-                <div class="pin-wrapper">
-                    <div class="pin-circle">
-                    <div class="pin-inner"></div>
+// Create labeled pin icon
+function createLabeledPinIcon(address, miles) {
+    return L.divIcon({
+        className: '',
+        html: `
+            <div class="marker-container zoom-scale-marker">
+                <div class="custom-label zoom-scale-label">
+                    <div><strong>${address}</strong></div>
+                    <div class="subtext">${miles ? miles + 'mi' : ''}</div>
+                </div>
+                <div class="custom-marker">
+                    <div class="pin-wrapper">
+                        <div class="pin-circle">
+                            <div class="pin-inner"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    `,
-    iconSize: [30, 42],
-    iconAnchor: [15, 42], // bottom center of the pin
-});
+        `,
+        iconSize: [100, 80],
+        iconAnchor: [50, 75],
+    });
+}
+
 
 // Address Search Handler
 document.getElementById('searchButton').addEventListener('click', () => { // Get the address from the input field when Search button is clicked
@@ -52,7 +61,9 @@ function geocodeAddress(address) {
         //Add marker of searched location
         setTimeout(() => {
             // Create a new marker for this address
-            const addressMarker = L.marker([lat, lon], {icon: purpleMarkerIcon}).addTo(map);
+            const addressMarker = L.marker([lat, lon], {
+                icon: createLabeledPinIcon(address, '')
+            }).addTo(map);
             
             // Remove existing marker for this address if it exists
             if (addressMap.has(address)) {
@@ -89,7 +100,7 @@ function geocodeAddress(address) {
 }
 
 //Draw circle and label
-function drawCircle(lat, lon, miles, label = null) {
+function drawCircle(lat, lon, miles, address = null) {
     const radiusInMeters = miles * 1609.34 //Convert miles to meters (1 mile = 1609.34 meters)
 
     //Draw radius circle on map
@@ -100,29 +111,15 @@ function drawCircle(lat, lon, miles, label = null) {
         radius: radiusInMeters //Radius in meters
     }).addTo(map);
 
-    // Custom label (banner to the right of the pin)
-    const labelMarker = L.marker([lat, lon], {
-        icon: L.divIcon({
-            className: '',
-            html: `
-                    <div class="custom-label zoom-scale-label">
-                        ${label ? `
-                                <div>
-                                <strong>${label}</strong><br>
-                                <span class="miles">${miles}mi</span>
-                                </div>
-                                ` : '' 
-                            }
-                    </div>
-                `,
-                iconSize: [120, 40],  //  Size of banner box
-                iconAnchor: [-60, 20],  // Position it to the right of the pin
-        }),
-        interactive: false // Prevents from being clicked 
-    }).addTo(map);
+    // Update existing marker's icon to show label
+    const existingData = addressMap.get(address);
+    if (existingData?.marker) {
+        const updatedIcon = createLabeledPinIcon(address, miles);
+        existingData.marker.setIcon(updatedIcon);
+    }
 
     updateMarkerLabelScale();
-    return { circle, label: labelMarker }
+    return { circle, label: null }
 }
 
 // Custom dropdown handling
@@ -176,14 +173,13 @@ optionItems.forEach(option => {
             if (oldData.label) map.removeLayer(oldData.label);
         
             // Draw new circle/label
-            const { circle, label } = drawCircle(lat, lon, value, address);
+            const { circle } = drawCircle(lat, lon, value, address);
         
             // Update that entry with new radius, circle, and label — keep existing marker
             addressMap.set(address, {
                 ...oldData,
                 radius: value,
                 circle,
-                label
             });
         }        
 
