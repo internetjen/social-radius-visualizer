@@ -25,29 +25,17 @@ html, body {
 }
 
 /* === Sidebar (Left Panel) === */
-/* .sidebar {
-  width: 400px;
-  max-width: 100%;
-  padding: 32px 24px;
-  background-color: #fff;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 24px;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
-} */
 
 .sidebar {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 100vh;
   width: 400px;
   max-width: 100%;
-  padding: 32px 24px;
+  padding: 28px 24px;
   background-color: #fff;
   overflow-y: auto;
-  gap: 24px;
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
 
 }
@@ -56,7 +44,11 @@ html, body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
 }
 
 .label {
@@ -100,7 +92,7 @@ html, body {
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  margin-bottom: 16px;
+  margin-bottom: 26px;
   transition: border 0.3s ease;
 }
 
@@ -112,7 +104,7 @@ html, body {
 /* === Buttons === */
 button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
   background-color: var(--primary-color);
   color: #fff;
@@ -128,16 +120,18 @@ button:hover {
 }
 
 /* === Radius Dropdown === */
-.radius-wrapper {
-  margin-top: 20px;
-  transition: opacity 0.3s ease;
-  visibility: hidden;
+#radius {
+  position: relative;
+  max-height: 0;
   opacity: 0;
+  margin-bottom: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, margin-bottom 0.4s ease;
 }
 
-.radius-wrapper.visible {
-  visibility: visible;
+#radius.visible {
+  max-height: 200px;
   opacity: 1;
+  margin-bottom: 18px;
 }
 
 .dropdown {
@@ -148,6 +142,7 @@ button:hover {
   cursor: pointer;
   padding: 14px;
   font-size: 16px;
+  z-index: 10; 
 }
 
 .dropdown.disabled {
@@ -195,33 +190,35 @@ button:hover {
 
 /* === Clear All Button === */
 .clear-wrapper {
-  margin-top: 20px;
-  transition: opacity 0.3s ease;
-  visibility: hidden;
+  max-height: 0;
   opacity: 0;
-  width: 100%;
+  margin-top: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
 }
 
 .clear-wrapper.visible {
-  visibility: visible;
+  max-height: 100px; /* adjust as needed */
   opacity: 1;
+  margin-top: 10px;
 }
 
 #clearAll {
-  background-color: var(--primary-color);
-  color: #fff;
-  border: none;
+  background-color: #f1edf6; /* very light purple */
+  color: var(--primary-color); /* use primary color for text */
+  border: 1px solid #e2d9f3; /* subtle border */
   border-radius: 999px;
   padding: 12px;
-  font-size: 16px;
+  font-size: 15px;
   width: 100%;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 #clearAll:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
+  background-color: #e9def6;
+  box-shadow: none;
+  transform: none;
 }
 
 /* === Custom Marker Pin === */
@@ -320,14 +317,66 @@ button:hover {
   .sidebar {
     width: 100%;
     height: auto;
-    box-shadow: none;
+    padding-bottom: 20px 16px 12px;
+    overflow: visible;
+  }
+
+  .sidebar-content {
+    gap: 0px;
+  }
+
+  .sidebar-footer {
+    margin-top: 0;
+  }
+  
+  .clear-wrapper.visible {
+    margin-top: 10px;
   }
 
   #map {
-    height: 50vh;
+    height: 68vh;
   }
 
   .hero-title {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .label {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .card input[type="text"] {
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+  .dropdown {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .dropdown-option {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  #clearAll {
+    font-size: 13px;
+    padding: 10px
+  }
+
+  .custom-label {
+    font-size: 11px;
+    padding: 5x 8px;
   }
 }

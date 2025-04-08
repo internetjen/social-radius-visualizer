@@ -4,6 +4,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
+
 map.on('zoomend', updateMarkerLabelScale);
 
 // Storage
@@ -21,7 +22,7 @@ function createLabeledPinIcon(address, miles) {
   return L.divIcon({
     className: '',
     html: `
-        <div class="marker-container zoom-scale-marker"">
+        <div class="marker-container zoom-scale-marker">
         <div class="custom-label zoom-scale-label" data-address="${address}">
             <div><strong>${address}</strong></div>
             <div class="subtext">${radiusLabels[miles] || ''}</div>
@@ -97,6 +98,7 @@ function drawCircle(lat, lon, miles, address = null) {
 
   const circle = L.circle([lat, lon], {
     color: '#3D1B5B',
+    weight: 1.5,
     fillColor: '#3D1B5B',
     fillOpacity: 0.15,
     radius: radiusInMeters
@@ -107,6 +109,9 @@ function drawCircle(lat, lon, miles, address = null) {
     const updatedIcon = createLabeledPinIcon(address, miles);
     existing.marker.setIcon(updatedIcon);
   }
+
+  //Fetch nearby dealerships
+  fetchNearbyDealerships(lat, lon, miles);
 
   updateMarkerLabelScale();
   return { circle };
@@ -254,22 +259,36 @@ map.on('click', (e) => {
     // Scroll to dropdown into view
     document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
   });
-  
-  const currentRadius = data.radius;
 
-if (currentRadius) {
-  selected.innerText = `${currentRadius} mi radius`;
-  selected.dataset.value = currentRadius;
 
-  // Visually highlight the selected option
-  optionItems.forEach(option => {
-    if (parseInt(option.dataset.value) === currentRadius) {
-      option.classList.add('active-option'); 
+// === Google Places: Dealership Search ===
+async function fetchNearbyDealerships(lat, lon, radiusMiles) {
+  const radiusMeters = radiusMiles * 1609.34;
+  const apiKey = 'YOUR_SECURED_API_KEY_HERE'; // Replace this
+  const endpoint = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=${radiusMeters}&type=car_dealer&key=${apiKey}`;
+
+  try {
+    const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(endpoint)}`);
+    const data = await response.json();
+
+    if (data.results?.length) {
+      data.results.forEach(place => {
+        const { name, geometry } = place;
+        const dealerMarker = L.marker([geometry.location.lat, geometry.location.lng], {
+          icon: L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+          })
+        }).bindPopup(`<strong>${name}</strong>`);
+
+        dealerMarker.addTo(map);
+      });
     } else {
-      option.classList.remove('active-option');
+      console.log('No dealerships found nearby.');
     }
-  });
-} else {
-  selected.innerText = 'Choose One';
-  selected.dataset.value = '';
+  } catch (err) {
+    console.error('Dealership fetch error:', err);
+  }
 }

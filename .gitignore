@@ -10,3 +10,6 @@ Thumbs.db
 
 # npm package-lock file (optional but often excluded)
 package-lock.json
+
+# env
+.env
