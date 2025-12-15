@@ -6,6 +6,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 
 map.on('zoomend', updateMarkerLabelScale);
+map.on('mousedown', () => map.getContainer().classList.add('grabbing'));
+map.on('mouseup', () => map.getContainer().classList.remove('grabbing'));
 
 // Storage
 const addressMap = new Map(); // { address: { lat, lon, radius, circle, marker } }
@@ -17,20 +19,43 @@ const radiusLabels = {
   };
   
 
+// // Create labeled pin icon
+// function createLabeledPinIcon(address, miles) {
+//   return L.divIcon({
+//     className: '',
+//     html: `
+//         <div class="marker-container zoom-scale-marker">
+//         <div class="custom-label zoom-scale-label" data-address="${address}">
+//             <div><strong>${address}</strong></div>
+//             <div class="subtext">${radiusLabels[miles] || ''}</div>
+//         </div>
+//         </div>
+//     `,
+//     iconSize: [100, 80],
+//     iconAnchor: [50, 30], 
+//   });
+// }
+
 // Create labeled pin icon
-function createLabeledPinIcon(address, miles) {
+function createLabeledPinIcon(address, miles, fullAddress = null) {
+  const displayAddress = fullAddress || address;
   return L.divIcon({
     className: '',
     html: `
         <div class="marker-container zoom-scale-marker">
-        <div class="custom-label zoom-scale-label" data-address="${address}">
+          <svg class="pin-svg" width="20" height="20" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="#A84DCF" stroke="white" stroke-width="3"/>
+            <circle cx="10" cy="10" r="3" fill="white"/>
+          </svg>
+          <div class="custom-label zoom-scale-label" data-address="${address}" title="${displayAddress}">
             <div><strong>${address}</strong></div>
             <div class="subtext">${radiusLabels[miles] || ''}</div>
-        </div>
+          </div>
         </div>
     `,
-    iconSize: [100, 80],
-    iconAnchor: [50, 30], 
+    iconSize: [20, 20],
+    iconAnchor: [10, 10], // Center of the pin
+    popupAnchor: [0, -10]
   });
 }
 
@@ -88,6 +113,121 @@ function geocodeAddress(address) {
     })
     .catch(err => {
       console.error("Geocoding error:", err);
+      alert("There was an error processing your request.");
+    });
+}
+
+// // Reverse Geocode (coordinates to address)
+// function reverseGeocode(lat, lon) {
+//   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+//   fetch(url)
+//     .then(res => res.json())
+//     .then(data => {
+//       if (!data.display_name) {
+//         alert("Could not find address for this location.");
+//         return;
+//       }
+
+//       const address = data.display_name;
+
+//       // Remove old marker/circle if exists
+//       if (addressMap.has(address)) {
+//         const old = addressMap.get(address);
+//         if (old.marker) map.removeLayer(old.marker);
+//         if (old.circle) map.removeLayer(old.circle);
+//       }
+
+//       const marker = L.marker([lat, lon], {
+//         icon: createLabeledPinIcon(address, '')
+//       }).addTo(map);
+
+//       addressMap.set(address, {
+//         lat,
+//         lon,
+//         radius: null,
+//         circle: null,
+//         marker,
+//       });
+
+//       // Update UI
+//       document.getElementById('addressInput').value = address;
+//       const radiusUI = document.getElementById('radius');
+//       radiusUI.classList.add('visible');
+//       radiusUI.dataset.address = address;
+//       radiusUI.dataset.lat = lat;
+//       radiusUI.dataset.lon = lon;
+
+//       enableCustomDropdown();
+//       updateMarkerLabelScale();
+//     })
+//     .catch(err => {
+//       console.error("Reverse geocoding error:", err);
+//       alert("There was an error processing your request.");
+//     });
+// }
+
+// Reverse Geocode (coordinates to address)
+function reverseGeocode(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.display_name) {
+        alert("Could not find address for this location.");
+        return;
+      }
+
+      const fullAddress = data.display_name;
+      
+      // Create a shorter, cleaner address
+      const addr = data.address || {};
+      const parts = [];
+      
+      if (addr.city || addr.town || addr.village) {
+        parts.push(addr.city || addr.town || addr.village);
+      }
+      if (addr.state) {
+        parts.push(addr.state);
+      }
+      if (addr.postcode) {
+        parts.push(addr.postcode);
+      }
+      
+      const shortAddress = parts.length > 0 ? parts.join(', ') : fullAddress;
+
+      // Remove old marker/circle if exists
+      if (addressMap.has(shortAddress)) {
+        const old = addressMap.get(shortAddress);
+        if (old.marker) map.removeLayer(old.marker);
+        if (old.circle) map.removeLayer(old.circle);
+      }
+
+      const marker = L.marker([lat, lon], {
+        icon: createLabeledPinIcon(shortAddress, '', fullAddress)
+      }).addTo(map);
+
+      addressMap.set(shortAddress, {
+        lat,
+        lon,
+        radius: null,
+        circle: null,
+        marker,
+        fullAddress: fullAddress
+      });
+
+      // Update UI
+      document.getElementById('addressInput').value = shortAddress;
+      const radiusUI = document.getElementById('radius');
+      radiusUI.classList.add('visible');
+      radiusUI.dataset.address = shortAddress;
+      radiusUI.dataset.lat = lat;
+      radiusUI.dataset.lon = lon;
+
+      enableCustomDropdown();
+      updateMarkerLabelScale();
+    })
+    .catch(err => {
+      console.error("Reverse geocoding error:", err);
       alert("There was an error processing your request.");
     });
 }
@@ -202,64 +342,109 @@ function updateMarkerLabelScale() {
   const scale = Math.pow(0.9, 10 - zoom);
 
   const markers = document.querySelectorAll('.zoom-scale-marker');
-  const labels = document.querySelectorAll('.zoom-scale-label');
 
   markers.forEach(marker => {
     marker.style.transform = `scale(${scale})`;
-    marker.style.transformOrigin = 'bottom center';
-  });
-
-  labels.forEach(label => {
-    label.style.transform = `scale(${scale})`;
-    label.style.transformOrigin = 'left center';
+    // Don't override transform-origin - let CSS handle it
   });
 }
 
-// Handle clicking a label to change radius
+// // Handle clicking a label to change radius
+// map.on('click', (e) => {
+//     const label = e.originalEvent.target.closest('.custom-label');
+//     if (!label) return;
+  
+//     const address = label.dataset.address;
+//     const data = addressMap.get(address);
+//     if (!data) return;
+
+//     //Update input field
+//     const input = document.getElementById('addressInput');
+//     input.value = address;
+//     input.focus();
+  
+//     // Update radius UI
+//     const radiusUI = document.getElementById('radius');
+//     radiusUI.classList.add('visible');
+//     radiusUI.dataset.address = address;
+//     radiusUI.dataset.lat = data.lat;
+//     radiusUI.dataset.lon = data.lon;
+  
+//     enableCustomDropdown();
+
+//     // Update dropdown selection
+//     const currentRadius = data.radius;
+//     if (currentRadius) {
+//         selected.innerText = radiusLabels[currentRadius] || `${currentRadius} mi radius`;
+//         selected.dataset.value = currentRadius;
+
+//         optionItems.forEach(option => {
+//             if (parseInt(option.dataset.value) === currentRadius) {
+//                 option.classList.add('active-option');
+//             } else {
+//                 option.classList.remove('active-option');
+//             }
+//         });
+//     } else {
+//         selected.innerText = 'Choose One';
+//         selected.dataset.value = '';
+//     }
+  
+//     // Scroll to dropdown into view
+//     document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
+//   });
+
+// Handle clicking a label to change radius OR clicking map to place pin
 map.on('click', (e) => {
     const label = e.originalEvent.target.closest('.custom-label');
-    if (!label) return;
-  
-    const address = label.dataset.address;
-    const data = addressMap.get(address);
-    if (!data) return;
+    
+    // If clicked on a label, handle label click
+    if (label) {
+      const address = label.dataset.address;
+      const data = addressMap.get(address);
+      if (!data) return;
 
-    //Update input field
-    const input = document.getElementById('addressInput');
-    input.value = address;
-    input.focus();
-  
-    // Update radius UI
-    const radiusUI = document.getElementById('radius');
-    radiusUI.classList.add('visible');
-    radiusUI.dataset.address = address;
-    radiusUI.dataset.lat = data.lat;
-    radiusUI.dataset.lon = data.lon;
-  
-    enableCustomDropdown();
+      // Update input field
+      const input = document.getElementById('addressInput');
+      input.value = address;
+      input.focus();
+    
+      // Update radius UI
+      const radiusUI = document.getElementById('radius');
+      radiusUI.classList.add('visible');
+      radiusUI.dataset.address = address;
+      radiusUI.dataset.lat = data.lat;
+      radiusUI.dataset.lon = data.lon;
+    
+      enableCustomDropdown();
 
-    // Update dropdown selection
-    const currentRadius = data.radius;
-    if (currentRadius) {
-        selected.innerText = radiusLabels[currentRadius] || `${currentRadius} mi radius`;
-        selected.dataset.value = currentRadius;
+      // Update dropdown selection
+      const currentRadius = data.radius;
+      if (currentRadius) {
+          selected.innerText = radiusLabels[currentRadius] || `${currentRadius} mi radius`;
+          selected.dataset.value = currentRadius;
 
-        optionItems.forEach(option => {
-            if (parseInt(option.dataset.value) === currentRadius) {
-                option.classList.add('active-option');
-            } else {
-                option.classList.remove('active-option');
-            }
-        });
-    } else {
-        selected.innerText = 'Choose One';
-        selected.dataset.value = '';
+          optionItems.forEach(option => {
+              if (parseInt(option.dataset.value) === currentRadius) {
+                  option.classList.add('active-option');
+              } else {
+                  option.classList.remove('active-option');
+              }
+          });
+      } else {
+          selected.innerText = 'Choose One';
+          selected.dataset.value = '';
+      }
+    
+      // Scroll to dropdown into view
+      document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
+    } 
+    // If clicked on empty map, place a new pin
+    else {
+      const { lat, lng } = e.latlng;
+      reverseGeocode(lat, lng);
     }
-  
-    // Scroll to dropdown into view
-    document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
-  });
-
+});
 
 // === Google Places: Dealership Search ===
 async function fetchNearbyDealerships(lat, lon, radiusMiles) {
