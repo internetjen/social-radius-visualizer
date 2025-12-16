@@ -426,3 +426,128 @@ button:hover {
     padding: 5x 8px;
   }
 }
+
+/* === Delete Button on Map === */
+.delete-radius-btn {
+  position: absolute;
+  background: white;
+  border: 2px solid #c33;
+  color: #c33;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.delete-radius-btn:hover {
+  background: #c33;
+  color: white;
+  transform: scale(1.15);
+}
+
+/* === Toggle Pin Mode Button === */
+.toggle-btn {
+  background-color: #f8f5fc;
+  color: #333;
+  border: 2px solid #e2d9f3;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.toggle-btn:hover {
+  border-color: #d0b8e8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(168, 77, 207, 0.15);
+}
+
+.toggle-status {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 6px;
+  color: #666;
+}
+
+.toggle-btn[data-active="true"] {
+  background: linear-gradient(135deg, #A84DCF 0%, #9339c4 100%);
+  color: white;
+  border-color: #A84DCF;
+  box-shadow: 0 3px 10px rgba(168, 77, 207, 0.35);
+}
+
+.toggle-btn[data-active="true"] .toggle-status {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+/* Click banner notification */
+.click-banner {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  color: #333;
+  padding: 14px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  border: 2px solid #A84DCF;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.click-banner.show {
+  display: block;
+  animation: slideDown 0.4s ease forwards;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.banner-icon {
+  width: 24px;
+  height: 24px;
+  color: #A84DCF;
+  flex-shrink: 0;
+}
+
+.banner-content span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

@@ -17,24 +17,78 @@ const radiusLabels = {
     15: 'Small - 15 mi',
     30: 'Large - 30 mi'
   };
-  
 
-// // Create labeled pin icon
-// function createLabeledPinIcon(address, miles) {
-//   return L.divIcon({
-//     className: '',
-//     html: `
-//         <div class="marker-container zoom-scale-marker">
-//         <div class="custom-label zoom-scale-label" data-address="${address}">
-//             <div><strong>${address}</strong></div>
-//             <div class="subtext">${radiusLabels[miles] || ''}</div>
-//         </div>
-//         </div>
-//     `,
-//     iconSize: [100, 80],
-//     iconAnchor: [50, 30], 
-//   });
-// }
+// Track pin placement mode
+let pinPlacementMode = false;  
+
+// Track selected radius for deletion
+let selectedRadius = null;
+let deleteMarker = null;
+
+// Create delete button icon
+function createDeleteIcon() {
+  return L.divIcon({
+    className: '',
+    html: '<div class="delete-radius-btn">×</div>',
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
+  });
+}
+
+// Show delete button at circle center
+function showDeleteButton(address) {
+  const data = addressMap.get(address);
+  if (!data) return;
+
+  // Remove existing delete button if any
+  if (deleteMarker) {
+    map.removeLayer(deleteMarker);
+  }
+
+  selectedRadius = address;
+
+  // Create marker with delete button at circle center
+  deleteMarker = L.marker([data.lat, data.lon], {
+    icon: createDeleteIcon(),
+    zIndexOffset: 2000 // Make sure it's on top
+  }).addTo(map);
+
+  // Add click handler after a brief delay to let the DOM update
+  setTimeout(() => {
+    const btn = document.querySelector('.delete-radius-btn');
+    if (btn) {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        deleteRadius(address);
+      };
+    }
+  }, 50);
+}
+
+// Delete a specific radius
+function deleteRadius(address) {
+  const data = addressMap.get(address);
+  if (!data) return;
+
+  // Remove from map
+  if (data.marker) map.removeLayer(data.marker);
+  if (data.circle) map.removeLayer(data.circle);
+
+  // Remove delete button
+  if (deleteMarker) {
+    map.removeLayer(deleteMarker);
+    deleteMarker = null;
+  }
+
+  // Remove from storage
+  addressMap.delete(address);
+  selectedRadius = null;
+
+  // Hide clear button if no more radii
+  if (addressMap.size === 0) {
+    document.getElementById('clearWrapper').classList.remove('visible');
+  }
+}
 
 // Create labeled pin icon
 function createLabeledPinIcon(address, miles, fullAddress = null) {
@@ -64,6 +118,55 @@ document.getElementById('searchButton').addEventListener('click', () => {
   const address = document.getElementById('addressInput').value.trim();
   if (address) geocodeAddress(address);
 });
+
+// Toggle pin placement mode
+let mapBanner = null;
+
+document.getElementById('togglePinMode').addEventListener('click', () => {
+  pinPlacementMode = !pinPlacementMode;
+  const toggleBtn = document.getElementById('togglePinMode');
+  const statusSpan = toggleBtn.querySelector('.toggle-status');
+  
+  if (pinPlacementMode) {
+    // Turn ON
+    toggleBtn.dataset.active = 'true';
+    statusSpan.textContent = 'ON';
+    map.getContainer().style.cursor = 'crosshair';
+    
+    // Show banner on map
+    showMapBanner('Click anywhere on the map to place a pin', 3000);
+    
+  } else {
+    // Turn OFF
+    toggleBtn.dataset.active = 'false';
+    statusSpan.textContent = 'OFF';
+    map.getContainer().style.cursor = '';
+    
+    // NEW: Show banner when turning off
+    showClickBanner(false);
+  }
+});
+
+// Show click banner
+function showClickBanner(isEnabled) {
+  const banner = document.getElementById('click-banner');
+  const message = document.getElementById('banner-message');
+  
+  // Update message based on state
+  if (isEnabled) {
+    message.textContent = 'Click anywhere on the map to place a pin';
+  } else {
+    message.textContent = 'Click-to-add is turned off';
+  }
+  
+  // Show banner
+  banner.classList.add('show');
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    banner.classList.remove('show');
+  }, 3000);
+}
 
 document.getElementById('addressInput').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') document.getElementById('searchButton').click();
@@ -116,55 +219,6 @@ function geocodeAddress(address) {
       alert("There was an error processing your request.");
     });
 }
-
-// // Reverse Geocode (coordinates to address)
-// function reverseGeocode(lat, lon) {
-//   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-//   fetch(url)
-//     .then(res => res.json())
-//     .then(data => {
-//       if (!data.display_name) {
-//         alert("Could not find address for this location.");
-//         return;
-//       }
-
-//       const address = data.display_name;
-
-//       // Remove old marker/circle if exists
-//       if (addressMap.has(address)) {
-//         const old = addressMap.get(address);
-//         if (old.marker) map.removeLayer(old.marker);
-//         if (old.circle) map.removeLayer(old.circle);
-//       }
-
-//       const marker = L.marker([lat, lon], {
-//         icon: createLabeledPinIcon(address, '')
-//       }).addTo(map);
-
-//       addressMap.set(address, {
-//         lat,
-//         lon,
-//         radius: null,
-//         circle: null,
-//         marker,
-//       });
-
-//       // Update UI
-//       document.getElementById('addressInput').value = address;
-//       const radiusUI = document.getElementById('radius');
-//       radiusUI.classList.add('visible');
-//       radiusUI.dataset.address = address;
-//       radiusUI.dataset.lat = lat;
-//       radiusUI.dataset.lon = lon;
-
-//       enableCustomDropdown();
-//       updateMarkerLabelScale();
-//     })
-//     .catch(err => {
-//       console.error("Reverse geocoding error:", err);
-//       alert("There was an error processing your request.");
-//     });
-// }
 
 // Reverse Geocode (coordinates to address)
 function reverseGeocode(lat, lon) {
@@ -244,9 +298,15 @@ function drawCircle(lat, lon, miles, address = null) {
     radius: radiusInMeters
   }).addTo(map);
 
+  // Add click handler to show delete button
+  circle.on('click', (e) => {
+    L.DomEvent.stopPropagation(e);
+    showDeleteButton(address);
+  });
+
   const existing = addressMap.get(address);
   if (existing?.marker) {
-    const updatedIcon = createLabeledPinIcon(address, miles);
+    const updatedIcon = createLabeledPinIcon(address, miles, existing.fullAddress);
     existing.marker.setIcon(updatedIcon);
   }
 
@@ -328,6 +388,13 @@ document.getElementById('clearAll').addEventListener('click', () => {
   });
   addressMap.clear();
 
+  // Hide delete button
+  if (deleteMarker) {
+    map.removeLayer(deleteMarker);
+    deleteMarker = null;
+  }
+  selectedRadius = null;
+
   const radius = document.getElementById('radius');
   radius.classList.remove('visible');
   dropdown.classList.add('disabled');
@@ -349,54 +416,20 @@ function updateMarkerLabelScale() {
   });
 }
 
-// // Handle clicking a label to change radius
-// map.on('click', (e) => {
-//     const label = e.originalEvent.target.closest('.custom-label');
-//     if (!label) return;
-  
-//     const address = label.dataset.address;
-//     const data = addressMap.get(address);
-//     if (!data) return;
-
-//     //Update input field
-//     const input = document.getElementById('addressInput');
-//     input.value = address;
-//     input.focus();
-  
-//     // Update radius UI
-//     const radiusUI = document.getElementById('radius');
-//     radiusUI.classList.add('visible');
-//     radiusUI.dataset.address = address;
-//     radiusUI.dataset.lat = data.lat;
-//     radiusUI.dataset.lon = data.lon;
-  
-//     enableCustomDropdown();
-
-//     // Update dropdown selection
-//     const currentRadius = data.radius;
-//     if (currentRadius) {
-//         selected.innerText = radiusLabels[currentRadius] || `${currentRadius} mi radius`;
-//         selected.dataset.value = currentRadius;
-
-//         optionItems.forEach(option => {
-//             if (parseInt(option.dataset.value) === currentRadius) {
-//                 option.classList.add('active-option');
-//             } else {
-//                 option.classList.remove('active-option');
-//             }
-//         });
-//     } else {
-//         selected.innerText = 'Choose One';
-//         selected.dataset.value = '';
-//     }
-  
-//     // Scroll to dropdown into view
-//     document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
-//   });
-
 // Handle clicking a label to change radius OR clicking map to place pin
 map.on('click', (e) => {
     const label = e.originalEvent.target.closest('.custom-label');
+    const deleteBtn = e.originalEvent.target.closest('.delete-radius-btn');
+    
+    // Don't do anything if clicking delete button
+    if (deleteBtn) return;
+
+    // Hide delete button when clicking elsewhere
+    if (deleteMarker) {
+      map.removeLayer(deleteMarker);
+      deleteMarker = null;
+      selectedRadius = null;
+    }
     
     // If clicked on a label, handle label click
     if (label) {
@@ -439,10 +472,22 @@ map.on('click', (e) => {
       // Scroll to dropdown into view
       document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
     } 
-    // If clicked on empty map, place a new pin
-    else {
+    // If clicked on empty map, place a new pin (only if mode is enabled)
+    else if (pinPlacementMode) {
       const { lat, lng } = e.latlng;
       reverseGeocode(lat, lng);
+    }
+    // NEW: Show reminder if clicking map while feature is off
+    else {
+      const banner = document.getElementById('click-banner');
+      const message = document.getElementById('banner-message');
+      
+      message.textContent = 'Turn on "Add Pins by Clicking Map" to place pins';
+      banner.classList.add('show');
+      
+      setTimeout(() => {
+        banner.classList.remove('show');
+      }, 3000);
     }
 });
 
