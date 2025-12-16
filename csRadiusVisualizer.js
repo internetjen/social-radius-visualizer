@@ -119,9 +119,6 @@ document.getElementById('searchButton').addEventListener('click', () => {
   if (address) geocodeAddress(address);
 });
 
-// Toggle pin placement mode
-let mapBanner = null;
-
 document.getElementById('togglePinMode').addEventListener('click', () => {
   pinPlacementMode = !pinPlacementMode;
   const toggleBtn = document.getElementById('togglePinMode');
@@ -134,7 +131,7 @@ document.getElementById('togglePinMode').addEventListener('click', () => {
     map.getContainer().style.cursor = 'crosshair';
     
     // Show banner on map
-    showMapBanner('Click anywhere on the map to place a pin', 3000);
+    showClickBanner(true);
     
   } else {
     // Turn OFF
@@ -151,12 +148,15 @@ document.getElementById('togglePinMode').addEventListener('click', () => {
 function showClickBanner(isEnabled) {
   const banner = document.getElementById('click-banner');
   const message = document.getElementById('banner-message');
+  const icon = document.querySelector('.banner-icon');
   
-  // Update message based on state
+  // Update message and icon based on state
   if (isEnabled) {
-    message.textContent = 'Click anywhere on the map to place a pin';
+    message.textContent = 'Click-to-add is turned ON';
+    icon.textContent = '✓';
   } else {
-    message.textContent = 'Click-to-add is turned off';
+    message.textContent = 'Click-to-add is turned OFF';
+    icon.textContent = '✓';
   }
   
   // Show banner
@@ -477,12 +477,14 @@ map.on('click', (e) => {
       const { lat, lng } = e.latlng;
       reverseGeocode(lat, lng);
     }
-    // NEW: Show reminder if clicking map while feature is off
+   // Show reminder if clicking map while feature is off
     else {
       const banner = document.getElementById('click-banner');
       const message = document.getElementById('banner-message');
+      const icon = document.querySelector('.banner-icon');
       
       message.textContent = 'Turn on "Add Pins by Clicking Map" to place pins';
+      icon.textContent = '!';
       banner.classList.add('show');
       
       setTimeout(() => {
