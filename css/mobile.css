@@ -1,0 +1,183 @@
+/* Mobile Styles - Tablets and Phones */
+
+@media (max-width: 768px) {
+  .app-container {
+    display: grid;
+    grid-template-rows: auto 1fr; /* sidebar + remaining space */
+    height: 100vh;
+  }
+
+  html,
+  body {
+    overflow: hidden;
+    position: fixed; /* Add this */
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Mobile bottom sheet */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 75vh;
+    max-height: 75vh;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(12px) !important;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding: 0;
+
+    transform: translateY(calc(75vh - 120px));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .sidebar.expanded {
+    transform: translateY(0);
+  }
+
+  .sidebar-content {
+    height: calc(100% - 100px); /* for mobile */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 20px 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar-footer {
+    padding: 0 20px 20px;
+  }
+
+  /* Grab handle area */
+  .grab-handle-area {
+    display: block;
+    text-align: center;
+    padding: 14px 20px 14px; /* ← More padding */
+    border-bottom: 2px solid rgba(168, 77, 207, 0.15); /* ← Thicker border */
+    background: white; /* ← Change from gradient to solid white */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ← Stronger shadow */
+  }
+
+  .grab-handle {
+    width: 48px;
+    height: 6px;
+    background: #a84dcf; /* Change from #bbb to purple */
+    border-radius: 3px;
+    margin: 0px auto 10px;
+    box-shadow: 0 2px 6px rgba(168, 77, 207, 0.3);
+  }
+
+  .grab-handle:active {
+    cursor: grabbing;
+    background: #8a3db3;
+  }
+
+  .sheet-hint {
+    display: flex;
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .sheet-hint::before {
+    content: "↑";
+    font-size: 18px;
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+
+  .sidebar.expanded .sheet-hint::before {
+    content: "↓";
+  }
+
+  .sidebar.expanded .sheet-hint {
+    color: #aaa;
+  }
+
+  /* Fade gradient at bottom */
+  .sidebar::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(
+      to top,
+      white,
+      transparent
+    ); /* ← Change rgba to white */
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s;
+    z-index: 10;
+  }
+
+  .sidebar.expanded::before {
+    opacity: 0;
+  }
+
+  /* Fullscreen map */
+  #map {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 0;
+  }
+
+  /* Smaller text on mobile */
+  .hero-title {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .hero-subtitle {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .card input[type="text"] {
+    font-size: 14px;
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+
+  .dropdown {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .dropdown-option {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  #clearAll {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .custom-label {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}

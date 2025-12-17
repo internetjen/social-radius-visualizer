@@ -1,0 +1,78 @@
+/* Sidebar Component - Desktop & Mobile */
+
+/* Desktop sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  max-width: 100%;
+  padding: 28px 24px;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  position: relative;
+  transform: none;
+  z-index: 2;
+}
+
+.sidebar-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+}
+
+/* Hero section */
+.hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: left;
+  background: linear-gradient(to right, #a84dcf, #c19aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.hero-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Card container */
+.card {
+  background: transparent;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: none;
+  width: 100%;
+}
+
+/* Hide grab handle on desktop */
+.grab-handle-area {
+  display: none;
+}
+
+.sheet-hint {
+  display: none;
+}
+
+/* Clear button wrapper */
+.clear-wrapper {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+}
+
+.clear-wrapper.visible {
+  max-height: 100px; /* adjust as needed */
+  opacity: 1;
+  margin-top: 10px;
+}

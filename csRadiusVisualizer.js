@@ -1,25 +1,24 @@
 // Initialize map
-const map = L.map('map').setView([39.8283, -98.5795], 5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
+const map = L.map("map").setView([39.8283, -98.5795], 5);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap contributors",
 }).addTo(map);
 
-
-map.on('zoomend', updateMarkerLabelScale);
-map.on('mousedown', () => map.getContainer().classList.add('grabbing'));
-map.on('mouseup', () => map.getContainer().classList.remove('grabbing'));
+map.on("zoomend", updateMarkerLabelScale);
+map.on("mousedown", () => map.getContainer().classList.add("grabbing"));
+map.on("mouseup", () => map.getContainer().classList.remove("grabbing"));
 
 // Storage
 const addressMap = new Map(); // { address: { lat, lon, radius, circle, marker } }
 
 // Radius labels
 const radiusLabels = {
-    15: 'Small - 15 mi',
-    30: 'Large - 30 mi'
-  };
+  15: "Small - 15 mi",
+  30: "Large - 30 mi",
+};
 
 // Track pin placement mode
-let pinPlacementMode = false;  
+let pinPlacementMode = false;
 
 // Track selected radius for deletion
 let selectedRadius = null;
@@ -28,10 +27,10 @@ let deleteMarker = null;
 // Create delete button icon
 function createDeleteIcon() {
   return L.divIcon({
-    className: '',
+    className: "",
     html: '<div class="delete-radius-btn">×</div>',
     iconSize: [36, 36],
-    iconAnchor: [18, 18]
+    iconAnchor: [18, 18],
   });
 }
 
@@ -50,12 +49,12 @@ function showDeleteButton(address) {
   // Create marker with delete button at circle center
   deleteMarker = L.marker([data.lat, data.lon], {
     icon: createDeleteIcon(),
-    zIndexOffset: 2000 // Make sure it's on top
+    zIndexOffset: 2000, // Make sure it's on top
   }).addTo(map);
 
   // Add click handler after a brief delay to let the DOM update
   setTimeout(() => {
-    const btn = document.querySelector('.delete-radius-btn');
+    const btn = document.querySelector(".delete-radius-btn");
     if (btn) {
       btn.onclick = (e) => {
         e.stopPropagation();
@@ -86,7 +85,7 @@ function deleteRadius(address) {
 
   // Hide clear button if no more radii
   if (addressMap.size === 0) {
-    document.getElementById('clearWrapper').classList.remove('visible');
+    document.getElementById("clearWrapper").classList.remove("visible");
   }
 }
 
@@ -94,7 +93,7 @@ function deleteRadius(address) {
 function createLabeledPinIcon(address, miles, fullAddress = null) {
   const displayAddress = fullAddress || address;
   return L.divIcon({
-    className: '',
+    className: "",
     html: `
         <div class="marker-container zoom-scale-marker">
           <svg class="pin-svg" width="20" height="20" viewBox="0 0 20 20">
@@ -103,70 +102,74 @@ function createLabeledPinIcon(address, miles, fullAddress = null) {
           </svg>
           <div class="custom-label zoom-scale-label" data-address="${address}" title="${displayAddress}">
             <div><strong>${address}</strong></div>
-            <div class="subtext">${radiusLabels[miles] || ''}</div>
+            <div class="subtext">${radiusLabels[miles] || ""}</div>
           </div>
         </div>
     `,
     iconSize: [20, 20],
     iconAnchor: [10, 10], // Center of the pin
-    popupAnchor: [0, -10]
+    popupAnchor: [0, -10],
   });
 }
 
 // Address Search
-document.getElementById('searchButton').addEventListener('click', () => {
-  const address = document.getElementById('addressInput').value.trim();
+document.getElementById("searchButton").addEventListener("click", () => {
+  const address = document.getElementById("addressInput").value.trim();
   if (address) geocodeAddress(address);
 });
 
-document.getElementById('togglePinMode').addEventListener('change', function() {
-  pinPlacementMode = this.checked;
-  
-  if (pinPlacementMode) {
-    // Turn ON
-    map.getContainer().style.cursor = 'crosshair';
-    showClickBanner(true);
-  } else {
-    // Turn OFF
-    map.getContainer().style.cursor = '';
-    showClickBanner(false);
-  }
-});
+document
+  .getElementById("togglePinMode")
+  .addEventListener("change", function () {
+    pinPlacementMode = this.checked;
+
+    if (pinPlacementMode) {
+      // Turn ON
+      map.getContainer().style.cursor = "crosshair";
+      showClickBanner(true);
+    } else {
+      // Turn OFF
+      map.getContainer().style.cursor = "";
+      showClickBanner(false);
+    }
+  });
 
 // Show click banner
 function showClickBanner(isEnabled) {
-  const banner = document.getElementById('click-banner');
-  const message = document.getElementById('banner-message');
-  const icon = document.querySelector('.banner-icon');
-  
+  const banner = document.getElementById("click-banner");
+  const message = document.getElementById("banner-message");
+  const icon = document.querySelector(".banner-icon");
+
   // Update message and icon based on state
   if (isEnabled) {
-    message.textContent = 'Click-to-add is turned ON';
-    icon.textContent = '✓';
+    message.textContent = "Click-to-add is turned ON";
+    icon.textContent = "✓";
   } else {
-    message.textContent = 'Click-to-add is turned OFF';
-    icon.textContent = '✓';
+    message.textContent = "Click-to-add is turned OFF";
+    icon.textContent = "✓";
   }
-  
+
   // Show banner
-  banner.classList.add('show');
-  
+  banner.classList.add("show");
+
   // Auto-hide after 3 seconds
   setTimeout(() => {
-    banner.classList.remove('show');
+    banner.classList.remove("show");
   }, 3000);
 }
 
-document.getElementById('addressInput').addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') document.getElementById('searchButton').click();
+document.getElementById("addressInput").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") document.getElementById("searchButton").click();
 });
 
 // Geocode
 function geocodeAddress(address) {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+    address
+  )}`;
   fetch(url)
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       if (!data.length) return alert("Address not found.");
 
       const lat = parseFloat(data[0].lat);
@@ -182,7 +185,7 @@ function geocodeAddress(address) {
         }
 
         const marker = L.marker([lat, lon], {
-          icon: createLabeledPinIcon(address, '')
+          icon: createLabeledPinIcon(address, ""),
         }).addTo(map);
 
         addressMap.set(address, {
@@ -193,8 +196,8 @@ function geocodeAddress(address) {
           marker,
         });
 
-        const radiusUI = document.getElementById('radius');
-        radiusUI.classList.add('visible');
+        const radiusUI = document.getElementById("radius");
+        radiusUI.classList.add("visible");
         radiusUI.dataset.address = address;
         radiusUI.dataset.lat = lat;
         radiusUI.dataset.lon = lon;
@@ -203,7 +206,7 @@ function geocodeAddress(address) {
         updateMarkerLabelScale();
       }, 2000);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("Geocoding error:", err);
       alert("There was an error processing your request.");
     });
@@ -213,19 +216,19 @@ function geocodeAddress(address) {
 function reverseGeocode(lat, lon) {
   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
   fetch(url)
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       if (!data.display_name) {
         alert("Could not find address for this location.");
         return;
       }
 
       const fullAddress = data.display_name;
-      
+
       // Create a shorter, cleaner address
       const addr = data.address || {};
       const parts = [];
-      
+
       if (addr.city || addr.town || addr.village) {
         parts.push(addr.city || addr.town || addr.village);
       }
@@ -235,8 +238,8 @@ function reverseGeocode(lat, lon) {
       if (addr.postcode) {
         parts.push(addr.postcode);
       }
-      
-      const shortAddress = parts.length > 0 ? parts.join(', ') : fullAddress;
+
+      const shortAddress = parts.length > 0 ? parts.join(", ") : fullAddress;
 
       // Remove old marker/circle if exists
       if (addressMap.has(shortAddress)) {
@@ -246,7 +249,7 @@ function reverseGeocode(lat, lon) {
       }
 
       const marker = L.marker([lat, lon], {
-        icon: createLabeledPinIcon(shortAddress, '', fullAddress)
+        icon: createLabeledPinIcon(shortAddress, "", fullAddress),
       }).addTo(map);
 
       addressMap.set(shortAddress, {
@@ -255,13 +258,13 @@ function reverseGeocode(lat, lon) {
         radius: null,
         circle: null,
         marker,
-        fullAddress: fullAddress
+        fullAddress: fullAddress,
       });
 
       // Update UI
-      document.getElementById('addressInput').value = shortAddress;
-      const radiusUI = document.getElementById('radius');
-      radiusUI.classList.add('visible');
+      document.getElementById("addressInput").value = shortAddress;
+      const radiusUI = document.getElementById("radius");
+      radiusUI.classList.add("visible");
       radiusUI.dataset.address = shortAddress;
       radiusUI.dataset.lat = lat;
       radiusUI.dataset.lon = lon;
@@ -269,7 +272,7 @@ function reverseGeocode(lat, lon) {
       enableCustomDropdown();
       updateMarkerLabelScale();
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("Reverse geocoding error:", err);
       alert("There was an error processing your request.");
     });
@@ -280,22 +283,26 @@ function drawCircle(lat, lon, miles, address = null) {
   const radiusInMeters = miles * 1609.34;
 
   const circle = L.circle([lat, lon], {
-    color: '#3D1B5B',
+    color: "#3D1B5B",
     weight: 1.5,
-    fillColor: '#3D1B5B',
+    fillColor: "#3D1B5B",
     fillOpacity: 0.15,
-    radius: radiusInMeters
+    radius: radiusInMeters,
   }).addTo(map);
 
   // Add click handler to show delete button
-  circle.on('click', (e) => {
+  circle.on("click", (e) => {
     L.DomEvent.stopPropagation(e);
     showDeleteButton(address);
   });
 
   const existing = addressMap.get(address);
   if (existing?.marker) {
-    const updatedIcon = createLabeledPinIcon(address, miles, existing.fullAddress);
+    const updatedIcon = createLabeledPinIcon(
+      address,
+      miles,
+      existing.fullAddress
+    );
     existing.marker.setIcon(updatedIcon);
   }
 
@@ -307,45 +314,45 @@ function drawCircle(lat, lon, miles, address = null) {
 }
 
 // Custom dropdown
-const dropdown = document.getElementById('radiusSelect');
-const selected = dropdown.querySelector('.dropdown-selected');
-const options = dropdown.querySelector('.dropdown-options');
-const optionItems = dropdown.querySelectorAll('.dropdown-option');
+const dropdown = document.getElementById("radiusSelect");
+const selected = dropdown.querySelector(".dropdown-selected");
+const options = dropdown.querySelector(".dropdown-options");
+const optionItems = dropdown.querySelectorAll(".dropdown-option");
 
 function enableCustomDropdown() {
-  dropdown.classList.remove('disabled');
-  selected.innerText = 'Choose One';
-  selected.dataset.value = '';
+  dropdown.classList.remove("disabled");
+  selected.innerText = "Choose One";
+  selected.dataset.value = "";
 }
 
-selected.addEventListener('click', () => {
-  if (dropdown.classList.contains('disabled')) {
+selected.addEventListener("click", () => {
+  if (dropdown.classList.contains("disabled")) {
     alert("Please search for an address first.");
     return;
   }
-  options.style.display = options.style.display === 'block' ? 'none' : 'block';
+  options.style.display = options.style.display === "block" ? "none" : "block";
 });
 
-optionItems.forEach(option => {
-  option.addEventListener('click', () => {
+optionItems.forEach((option) => {
+  option.addEventListener("click", () => {
     const value = parseInt(option.dataset.value);
     const text = option.innerText;
 
-    const radiusData = document.getElementById('radius').dataset;
+    const radiusData = document.getElementById("radius").dataset;
     const address = radiusData.address;
     const lat = parseFloat(radiusData.lat);
     const lon = parseFloat(radiusData.lon);
 
     if (!address || isNaN(lat) || isNaN(lon)) {
       alert("Please search for an address first.");
-      selected.innerText = 'Choose One';
-      selected.dataset.value = '';
+      selected.innerText = "Choose One";
+      selected.dataset.value = "";
       return;
     }
 
     selected.innerText = radiusLabels[value] || `${value} mi radius`;
     selected.dataset.value = value;
-    options.style.display = 'none';
+    options.style.display = "none";
 
     if (addressMap.has(address)) {
       const old = addressMap.get(address);
@@ -356,21 +363,21 @@ optionItems.forEach(option => {
       addressMap.set(address, {
         ...old,
         radius: value,
-        circle
+        circle,
       });
     }
 
-    document.getElementById('clearWrapper').classList.add('visible');
+    document.getElementById("clearWrapper").classList.add("visible");
   });
 });
 
-document.addEventListener('click', e => {
+document.addEventListener("click", (e) => {
   if (!dropdown.contains(e.target)) {
-    options.style.display = 'none';
+    options.style.display = "none";
   }
 });
 
-document.getElementById('clearAll').addEventListener('click', () => {
+document.getElementById("clearAll").addEventListener("click", () => {
   addressMap.forEach(({ marker, circle }) => {
     if (marker) map.removeLayer(marker);
     if (circle) map.removeLayer(circle);
@@ -384,12 +391,12 @@ document.getElementById('clearAll').addEventListener('click', () => {
   }
   selectedRadius = null;
 
-  const radius = document.getElementById('radius');
-  radius.classList.remove('visible');
-  dropdown.classList.add('disabled');
-  selected.innerText = 'Choose One';
-  selected.dataset.value = '';
-  document.getElementById('clearWrapper').classList.remove('visible');
+  const radius = document.getElementById("radius");
+  radius.classList.remove("visible");
+  dropdown.classList.add("disabled");
+  selected.innerText = "Choose One";
+  selected.dataset.value = "";
+  document.getElementById("clearWrapper").classList.remove("visible");
 });
 
 // Label & Marker Scaling
@@ -397,164 +404,180 @@ function updateMarkerLabelScale() {
   const zoom = map.getZoom();
   const scale = Math.pow(0.9, 10 - zoom);
 
-  const markers = document.querySelectorAll('.zoom-scale-marker');
+  const markers = document.querySelectorAll(".zoom-scale-marker");
 
-  markers.forEach(marker => {
+  markers.forEach((marker) => {
     marker.style.transform = `scale(${scale})`;
     // Don't override transform-origin - let CSS handle it
   });
 }
 
 // Handle clicking a label to change radius OR clicking map to place pin
-map.on('click', (e) => {
-    const label = e.originalEvent.target.closest('.custom-label');
-    const deleteBtn = e.originalEvent.target.closest('.delete-radius-btn');
-    
-    // Don't do anything if clicking delete button
-    if (deleteBtn) return;
+map.on("click", (e) => {
+  const label = e.originalEvent.target.closest(".custom-label");
+  const deleteBtn = e.originalEvent.target.closest(".delete-radius-btn");
 
-    // Hide delete button when clicking elsewhere
-    if (deleteMarker) {
-      map.removeLayer(deleteMarker);
-      deleteMarker = null;
-      selectedRadius = null;
+  // Don't do anything if clicking delete button
+  if (deleteBtn) return;
+
+  // Hide delete button when clicking elsewhere
+  if (deleteMarker) {
+    map.removeLayer(deleteMarker);
+    deleteMarker = null;
+    selectedRadius = null;
+  }
+
+  // If clicked on a label, handle label click
+  if (label) {
+    const address = label.dataset.address;
+    const data = addressMap.get(address);
+    if (!data) return;
+
+    // Update input field
+    const input = document.getElementById("addressInput");
+    input.value = address;
+    input.focus();
+
+    // Update radius UI
+    const radiusUI = document.getElementById("radius");
+    radiusUI.classList.add("visible");
+    radiusUI.dataset.address = address;
+    radiusUI.dataset.lat = data.lat;
+    radiusUI.dataset.lon = data.lon;
+
+    enableCustomDropdown();
+
+    // Update dropdown selection
+    const currentRadius = data.radius;
+    if (currentRadius) {
+      selected.innerText =
+        radiusLabels[currentRadius] || `${currentRadius} mi radius`;
+      selected.dataset.value = currentRadius;
+
+      optionItems.forEach((option) => {
+        if (parseInt(option.dataset.value) === currentRadius) {
+          option.classList.add("active-option");
+        } else {
+          option.classList.remove("active-option");
+        }
+      });
+    } else {
+      selected.innerText = "Choose One";
+      selected.dataset.value = "";
     }
-    
-    // If clicked on a label, handle label click
-    if (label) {
-      const address = label.dataset.address;
-      const data = addressMap.get(address);
-      if (!data) return;
 
-      // Update input field
-      const input = document.getElementById('addressInput');
-      input.value = address;
-      input.focus();
-    
-      // Update radius UI
-      const radiusUI = document.getElementById('radius');
-      radiusUI.classList.add('visible');
-      radiusUI.dataset.address = address;
-      radiusUI.dataset.lat = data.lat;
-      radiusUI.dataset.lon = data.lon;
-    
-      enableCustomDropdown();
+    // Scroll to dropdown into view
+    document
+      .getElementById("radiusSelect")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }
+  // If clicked on empty map, place a new pin (only if mode is enabled)
+  else if (pinPlacementMode) {
+    const { lat, lng } = e.latlng;
+    reverseGeocode(lat, lng);
+  }
+  // Show reminder if clicking map while feature is off
+  else {
+    const banner = document.getElementById("click-banner");
+    const message = document.getElementById("banner-message");
+    const icon = document.querySelector(".banner-icon");
 
-      // Update dropdown selection
-      const currentRadius = data.radius;
-      if (currentRadius) {
-          selected.innerText = radiusLabels[currentRadius] || `${currentRadius} mi radius`;
-          selected.dataset.value = currentRadius;
+    message.textContent = 'Turn on "Add Pins by Clicking Map" to place pins';
+    icon.textContent = "!";
+    banner.classList.add("show");
 
-          optionItems.forEach(option => {
-              if (parseInt(option.dataset.value) === currentRadius) {
-                  option.classList.add('active-option');
-              } else {
-                  option.classList.remove('active-option');
-              }
-          });
-      } else {
-          selected.innerText = 'Choose One';
-          selected.dataset.value = '';
-      }
-    
-      // Scroll to dropdown into view
-      document.getElementById('radiusSelect')?.scrollIntoView({ behavior: 'smooth' });
-    } 
-    // If clicked on empty map, place a new pin (only if mode is enabled)
-    else if (pinPlacementMode) {
-      const { lat, lng } = e.latlng;
-      reverseGeocode(lat, lng);
-    }
-   // Show reminder if clicking map while feature is off
-    else {
-      const banner = document.getElementById('click-banner');
-      const message = document.getElementById('banner-message');
-      const icon = document.querySelector('.banner-icon');
-      
-      message.textContent = 'Turn on "Add Pins by Clicking Map" to place pins';
-      icon.textContent = '!';
-      banner.classList.add('show');
-      
-      setTimeout(() => {
-        banner.classList.remove('show');
-      }, 3000);
-    }
+    setTimeout(() => {
+      banner.classList.remove("show");
+    }, 3000);
+  }
 });
 
 // === Google Places: Dealership Search ===
 async function fetchNearbyDealerships(lat, lon, radiusMiles) {
   const radiusMeters = radiusMiles * 1609.34;
-  const apiKey = 'YOUR_SECURED_API_KEY_HERE'; // Replace this
+  const apiKey = "YOUR_SECURED_API_KEY_HERE"; // Replace this
   const endpoint = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=${radiusMeters}&type=car_dealer&key=${apiKey}`;
 
   try {
-    const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(endpoint)}`);
+    const response = await fetch(
+      `https://corsproxy.io/?${encodeURIComponent(endpoint)}`
+    );
     const data = await response.json();
 
     if (data.results?.length) {
-      data.results.forEach(place => {
+      data.results.forEach((place) => {
         const { name, geometry } = place;
-        const dealerMarker = L.marker([geometry.location.lat, geometry.location.lng], {
-          icon: L.icon({
-            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-          })
-        }).bindPopup(`<strong>${name}</strong>`);
+        const dealerMarker = L.marker(
+          [geometry.location.lat, geometry.location.lng],
+          {
+            icon: L.icon({
+              iconUrl: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+              iconSize: [32, 32],
+              iconAnchor: [16, 32],
+              popupAnchor: [0, -32],
+            }),
+          }
+        ).bindPopup(`<strong>${name}</strong>`);
 
         dealerMarker.addTo(map);
       });
     } else {
-      console.log('No dealerships found nearby.');
+      console.log("No dealerships found nearby.");
     }
   } catch (err) {
-    console.error('Dealership fetch error:', err);
+    console.error("Dealership fetch error:", err);
   }
 }
 
 // === Mobile Bottom Sheet Touch Handlers ===
 if (window.innerWidth <= 768) {
-  const sheet = document.querySelector('.sidebar');  // Just use .sidebar
-  const handle = document.querySelector('.grab-handle');
-  
+  const sheet = document.querySelector(".sidebar"); // Just use .sidebar
+  const handle = document.querySelector(".grab-handle");
+
   let startY = 0;
   let currentTranslate = 0;
   let isDragging = false;
 
-  handle.addEventListener('touchstart', (e) => {
-    startY = e.touches[0].clientY;
-    isDragging = true;
-  }, { passive: true });
+  handle.addEventListener(
+    "touchstart",
+    (e) => {
+      startY = e.touches[0].clientY;
+      isDragging = true;
+    },
+    { passive: true }
+  );
 
-  handle.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    
-    const currentY = e.touches[0].clientY;
-    const diff = currentY - startY;
-    
-    if (sheet.classList.contains('expanded') && diff > 0) {
-      currentTranslate = diff;
-      sheet.style.transform = `translateY(${currentTranslate}px)`;
-    } else if (!sheet.classList.contains('expanded') && diff < 0) {
-      currentTranslate = diff;
-      sheet.style.transform = `translateY(calc(75vh - 80px + ${currentTranslate}px))`;
-    }
-  }, { passive: true });
+  handle.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!isDragging) return;
 
-  handle.addEventListener('touchend', () => {
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - startY;
+
+      if (sheet.classList.contains("expanded") && diff > 0) {
+        currentTranslate = diff;
+        sheet.style.transform = `translateY(${currentTranslate}px)`;
+      } else if (!sheet.classList.contains("expanded") && diff < 0) {
+        currentTranslate = diff;
+        sheet.style.transform = `translateY(calc(75vh - 80px + ${currentTranslate}px))`;
+      }
+    },
+    { passive: true }
+  );
+
+  handle.addEventListener("touchend", () => {
     isDragging = false;
-    
+
     if (Math.abs(currentTranslate) > 50) {
-      sheet.classList.toggle('expanded');
+      sheet.classList.toggle("expanded");
     }
-    
-    sheet.style.transform = '';
+
+    sheet.style.transform = "";
     currentTranslate = 0;
   });
 
-  handle.addEventListener('click', () => {
-    sheet.classList.toggle('expanded');
+  handle.addEventListener("click", () => {
+    sheet.classList.toggle("expanded");
   });
 }

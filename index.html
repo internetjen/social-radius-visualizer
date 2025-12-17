@@ -1,77 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Social Radius Visualizer</title>
 
   <!-- Fonts & Styles -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/main.css" />
 </head>
 
 <body>
   <main class="app-container">
-<div class="sidebar">
-  <!-- Wrap grab-handle AND sheet-hint together -->
-  <div class="grab-handle-area">
-    <div class="grab-handle"></div>
-    <div class="sheet-hint">Swipe up to search</div>
-  </div>
+    <div class="sidebar">
+      <!-- Wrap grab-handle AND sheet-hint together -->
+      <div class="grab-handle-area">
+        <div class="grab-handle"></div>
+        <div class="sheet-hint">Swipe up to search</div>
+      </div>
 
-  <div class="sidebar-content">
-    <header>
-      <h1 class="hero-title">Cars Social Visualizer</h1>
-      <p class="hero-subtitle">
-        Visualize any address and its market radius to find growth opportunities.
-      </p>
-    </header>
+      <div class="sidebar-content">
+        <header>
+          <h1 class="hero-title">Cars Social Visualizer</h1>
+          <p class="hero-subtitle">
+            Visualize any address and its market radius to find growth opportunities.
+          </p>
+        </header>
 
-    <section class="card">
-      <!-- Address Input -->
-      <label for="addressInput" class="label">Enter Address:</label>
-      <input type="text" id="addressInput" placeholder="e.g. 123 Main St" />
+        <section class="card">
+          <!-- Address Input -->
+          <label for="addressInput" class="label">Enter Address:</label>
+          <input type="text" id="addressInput" placeholder="e.g. 123 Main St" />
 
-      <!-- Radius Dropdown -->
-      <div class="radius-wrapper" id="radius">
-        <label class="label" for="radiusSelect">Choose Social Radius Size:</label>
-        <div class="dropdown disabled" id="radiusSelect">
-          <div class="dropdown-selected">Select one</div>
-          <div class="dropdown-options">
-            <div class="dropdown-option" data-value="15">Small - 15 mi</div>
-            <div class="dropdown-option" data-value="30">Large - 30 mi</div>
+          <!-- Radius Dropdown -->
+          <div class="radius-wrapper" id="radius">
+            <label class="label" for="radiusSelect">Choose Social Radius Size:</label>
+            <div class="dropdown disabled" id="radiusSelect">
+              <div class="dropdown-selected">Select one</div>
+              <div class="dropdown-options">
+                <div class="dropdown-option" data-value="15">Small - 15 mi</div>
+                <div class="dropdown-option" data-value="30">Large - 30 mi</div>
+              </div>
+            </div>
           </div>
+
+          <!-- Search Button -->
+          <button id="searchButton">Find Address</button>
+
+          <!-- Toggle Pin Mode -->
+          <div class="toggle-section">
+            <label class="toggle-label-wrapper">
+              <span class="toggle-text">📍 Add Pins by Clicking Map</span>
+              <div class="toggle-switch">
+                <input type="checkbox" id="togglePinMode" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          </div>
+        </section>
+      </div>
+
+      <!-- Clear All Button -->
+      <div class="sidebar-footer">
+        <div class="clear-wrapper" id="clearWrapper">
+          <button id="clearAll">Clear All</button>
         </div>
       </div>
-
-      <!-- Search Button -->
-      <button id="searchButton">Find Address</button>
-
-      <!-- Toggle Pin Mode -->
-      <div class="toggle-section">
-        <label class="toggle-label-wrapper">
-          <span class="toggle-text">📍 Add Pins by Clicking Map</span>
-          <div class="toggle-switch">
-            <input type="checkbox" id="togglePinMode" />
-            <span class="toggle-slider"></span>
-          </div>
-        </label>
-      </div>
-    </section>
-  </div>
-
-  <!-- Clear All Button -->
-  <div class="sidebar-footer">
-    <div class="clear-wrapper" id="clearWrapper">
-      <button id="clearAll">Clear All</button>
     </div>
-  </div>
-</div>
 
     <!-- Map Panel -->
     <div id="map"></div>
-    
+
     <!-- Click Banner (NEW) -->
     <div id="click-banner" class="click-banner">
       <div class="banner-content">
@@ -85,4 +86,5 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="csRadiusVisualizer.js"></script>
 </body>
+
 </html>

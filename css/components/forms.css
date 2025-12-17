@@ -1,0 +1,164 @@
+/* Form Elements - Inputs, Labels, Dropdowns, Toggles */
+.label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+/* Text inputs */
+.card input[type="text"] {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 26px;
+  transition: border 0.3s ease;
+}
+
+.card input[type="text"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Radius dropdown */
+#radius {
+  position: relative;
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, margin-bottom 0.4s ease;
+}
+
+#radius.visible {
+  max-height: 200px;
+  opacity: 1;
+  margin-bottom: 18px;
+}
+
+.dropdown {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  padding: 14px;
+  font-size: 16px;
+  z-index: 10;
+}
+
+.dropdown.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 1000;
+  display: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-option {
+  padding: 12px;
+  transition: background 0.3s;
+}
+
+.dropdown-option.active-option {
+  background-color: #eee;
+  font-weight: bold;
+}
+
+.dropdown-option:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Toggle Switch */
+.toggle-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2d9f3;
+}
+
+.toggle-label-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 12px 0;
+}
+
+.toggle-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  user-select: none;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.toggle-switch input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 28px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .toggle-slider {
+  background-color: #a84dcf;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(168, 77, 207, 0.2);
+}
+
+.toggle-slider:hover {
+  background-color: #bbb;
+}
+
+input:checked + .toggle-slider:hover {
+  background-color: #9333c4;
+}

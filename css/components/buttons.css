@@ -1,0 +1,65 @@
+/* Button Styles */
+
+/* Primary buttons */
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 14px rgba(168, 77, 207, 0.4);
+}
+
+/* Clear All button */
+#clearAll {
+  background-color: #f1edf6; /* very light purple */
+  color: var(--primary-color); /* use primary color for text */
+  border: 1px solid #e2d9f3; /* subtle border */
+  border-radius: 999px;
+  padding: 12px;
+  font-size: 15px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#clearAll:hover {
+  background-color: #e9def6;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Delete radius button */
+.delete-radius-btn {
+  position: absolute;
+  background: white;
+  border: 2px solid #c33;
+  color: #c33;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.delete-radius-btn:hover {
+  background: #c33;
+  color: white;
+  transform: scale(1.15);
+}
