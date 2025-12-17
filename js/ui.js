@@ -32,43 +32,46 @@ export function initDropdown() {
     options.style.display = options.style.display === "block" ? "none" : "block";
   });
 
-  optionItems.forEach((option) => {
-    option.addEventListener("click", () => {
-      const value = parseInt(option.dataset.value);
-      const text = option.innerText;
+optionItems.forEach((option) => {
+  option.addEventListener("click", () => {
+    const value = parseInt(option.dataset.value);
 
-      const radiusData = document.getElementById("radius").dataset;
-      const address = radiusData.address;
-      const lat = parseFloat(radiusData.lat);
-      const lon = parseFloat(radiusData.lon);
+    const radiusData = document.getElementById("radius").dataset;
+    const address = radiusData.address; // ← Get address from dataset
+    const lat = parseFloat(radiusData.lat);
+    const lon = parseFloat(radiusData.lon);
 
-      if (!address || isNaN(lat) || isNaN(lon)) {
-        alert("Please search for an address first.");
-        selected.innerText = "Choose One";
-        selected.dataset.value = "";
-        return;
-      }
+    console.log('Dropdown clicked - Address:', address, 'Lat:', lat, 'Lon:', lon); // ← ADD DEBUG
 
-      selected.innerText = RADIUS_OPTIONS[value] || `${value} mi radius`;
-      selected.dataset.value = value;
-      options.style.display = "none";
+    if (!address || isNaN(lat) || isNaN(lon)) {
+      alert("Please search for an address first.");
+      selected.innerText = "Choose One";
+      selected.dataset.value = "";
+      return;
+    }
 
-      if (addressMap.has(address)) {
-        const old = addressMap.get(address);
-        if (old.circle) map.removeLayer(old.circle);
+    selected.innerText = RADIUS_OPTIONS[value] || `${value} mi radius`;
+    selected.dataset.value = value;
+    options.style.display = "none";
 
-        const { circle } = drawCircle(lat, lon, value, address);
+    if (addressMap.has(address)) {
+      const old = addressMap.get(address);
+      if (old.circle) map.removeLayer(old.circle);
 
-        addressMap.set(address, {
-          ...old,
-          radius: value,
-          circle,
-        });
-      }
+      console.log('Calling drawCircle with address:', address); // ← ADD DEBUG
 
-      document.getElementById("clearWrapper").classList.add("visible");
-    });
+      const { circle } = drawCircle(lat, lon, value, address); // ← address is passed here
+
+      addressMap.set(address, {
+        ...old,
+        radius: value,
+        circle,
+      });
+    }
+
+    document.getElementById("clearWrapper").classList.add("visible");
   });
+});
 
   // Close dropdown when clicking outside
   document.addEventListener("click", (e) => {
@@ -286,4 +289,82 @@ export function initMobileSheet() {
       sheet.classList.toggle("expanded");
     });
   }
+}
+
+// Initialize dealership panel
+export function initDealershipPanel() {
+  const panelHeader = document.getElementById('panelHeader');
+  const panelContent = document.getElementById('panelContent');
+  
+  panelHeader.addEventListener('click', () => {
+    panelHeader.classList.toggle('collapsed');
+    panelContent.classList.toggle('hidden');
+  });
+}
+
+// Update dealership panel with data
+export function updateDealershipPanel(dealerships, centerLat, centerLon) {
+  const panelCount = document.getElementById('panelCount');
+  const panelEmpty = document.getElementById('panelEmpty');
+  const dealershipList = document.getElementById('dealershipList');
+  
+  if (!dealerships || dealerships.length === 0) {
+    panelCount.textContent = '0';
+    panelEmpty.style.display = 'block';
+    dealershipList.innerHTML = '';
+    return;
+  }
+  
+  // Update count
+  panelCount.textContent = dealerships.length;
+  panelEmpty.style.display = 'none';
+  
+  // Calculate distances and sort by distance
+  const dealershipsWithDistance = dealerships.map(d => {
+    const distance = calculateDistance(centerLat, centerLon, d.lat, d.lon);
+    return { ...d, distance };
+  }).sort((a, b) => a.distance - b.distance);
+  
+  // Build list HTML
+  dealershipList.innerHTML = dealershipsWithDistance.map(d => {
+    const name = d.tags?.name || 'Unnamed Dealership';
+    const brand = d.tags?.brand || d.tags?.operator || '';
+    const distanceText = d.distance < 1 ? 
+      `${(d.distance * 5280).toFixed(0)} ft away` : 
+      `${d.distance.toFixed(1)} mi away`;
+    
+    return `
+      <div class="dealership-item" data-lat="${d.lat}" data-lon="${d.lon}">
+        <div class="dealership-name">${name}</div>
+        ${brand ? `<div class="dealership-brand">${brand}</div>` : ''}
+        <div class="dealership-distance">${distanceText}</div>
+      </div>
+    `;
+  }).join('');
+  
+  // Add click handlers to zoom to dealership
+  dealershipList.querySelectorAll('.dealership-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const lat = parseFloat(item.dataset.lat);
+      const lon = parseFloat(item.dataset.lon);
+      map.flyTo([lat, lon], 15, { duration: 1 });
+    });
+  });
+}
+
+// Calculate distance between two coordinates (Haversine formula)
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 3959; // Earth's radius in miles
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toRad(degrees) {
+  return degrees * (Math.PI / 180);
 }

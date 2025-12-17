@@ -13,6 +13,8 @@
 @import 'components/buttons.css';
 @import 'components/markers.css';
 @import 'components/modals.css';
+@import 'components/dealership-panel.css';
+
 
 /* 3. Mobile styles*/
 @import 'mobile.css';

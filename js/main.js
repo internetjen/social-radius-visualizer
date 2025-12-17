@@ -7,7 +7,8 @@ import {
   initTogglePinMode, 
   initClearAllButton, 
   initMapClickHandler,
-  initMobileSheet 
+  initMobileSheet,
+  initDealershipPanel 
 } from './ui.js';
 
 // Initialize app when DOM is ready
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initClearAllButton();
   initMapClickHandler();
   initMobileSheet();
+  initDealershipPanel()
 
   // Search button handler
   document.getElementById("searchButton").addEventListener("click", () => {

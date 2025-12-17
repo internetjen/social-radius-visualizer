@@ -22,8 +22,18 @@ export const CIRCLE_STYLE = {
 export const MILES_TO_METERS = 1609.34;
 
 export const API_CONFIG = {
-  googlePlacesKey: "YOUR_SECURED_API_KEY_HERE",
-  corsProxy: "https://corsproxy.io/"
+  overpassUrl: "https://overpass-api.de/api/interpreter"
+};
+
+export const DEALERSHIP_CONFIG = {
+  // OpenStreetMap tags for car dealerships
+  tags: [
+    'shop=car',
+    'shop=car_repair', 
+    'shop=car_parts'
+  ],
+  // filter to only car sales (not repair shops)
+  salesOnly: true
 };
 
 export const GEOCODING = {
