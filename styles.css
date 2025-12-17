@@ -358,7 +358,11 @@ button:hover {
 }
 
 /* Hide grab handle on desktop */
-.grab-handle {
+.grab-handle-area {
+  display: none;
+}
+
+.sheet-hint {
   display: none;
 }
 
@@ -392,7 +396,7 @@ button:hover {
     z-index: 1000;
     padding: 0;
     
-    transform: translateY(calc(75vh - 80px));
+    transform: translateY(calc(75vh - 120px));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
   }
@@ -402,10 +406,10 @@ button:hover {
   }
 
   .sidebar-content {
-   height: calc(100% - 80px);
+    height: calc(100% - 100px);  /* for mobile */
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 20px 20px;
+    padding: 16px 20px 20px;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -414,21 +418,64 @@ button:hover {
   }
 
     /* Grab handle */
-  .grab-handle {
-    display: block;  /* Hidden on desktop, visible on mobile */
-    width: 48px;
-    height: 5px;
-    background: #bbb;
-    border-radius: 3px;
-    margin: 12px auto 8px;
-    cursor: grab;
-    flex-shrink: 0;
+  .grab-handle-area {
+    display: block; 
+    text-align: center;
+    padding: 14px 20px 14px;  /* ← More padding */
+    border-bottom: 2px solid rgba(168, 77, 207, 0.15);  /* ← Thicker border */
+    background: white;  /* ← Change from gradient to solid white */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);  /* ← Stronger shadow */
   }
+
+.grab-handle {
+  width: 48px;
+  height: 6px;
+  background: #A84DCF;  /* Change from #bbb to purple */
+  border-radius: 3px;
+  margin: 0px auto 10px;
+  box-shadow: 0 2px 6px rgba(168, 77, 207, 0.3);
+
+}
 
   .grab-handle:active {
     cursor: grabbing;
-    background: #999;
+    background: #8a3db3;
   }
+  .sheet-hint {
+    display: flex;
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+.sidebar::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to top, white, transparent);  /* ← Change rgba to white */
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+
+.sidebar.expanded::before {
+  opacity: 0;
+}
+
+.sheet-hint::before {
+  content: "↑";
+  font-size: 18px;
+  color: var(--primary-color);
+  font-weight: bold;
+
+}
 
   /* Make map fullscreen on mobile */
   #map {
@@ -439,13 +486,25 @@ button:hover {
     z-index: 0;
   }
 
+  .sidebar.expanded .sheet-hint::before {
+  content: "↓";
+}
+
+.sidebar.expanded .sheet-hint {
+  color: #aaa;
+}
+
   /* Smaller text on mobile */
   .hero-title {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
   }
 
   .hero-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-top: 4px;
   }
 
   .label {

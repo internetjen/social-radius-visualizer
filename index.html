@@ -13,58 +13,61 @@
 
 <body>
   <main class="app-container">
-    <!-- Left Panel -->
-    <!-- <div class="sidebar"> -->
-    <div class="sidebar" >
-        <div class="grab-handle"></div>
-      <div class="sidebar-content">
-      <header>
-        <h1 class="hero-title">Cars Social Visualizer</h1>
-        <p class="hero-subtitle">
-          Visualize any address and its market radius to find growth opportunities.
-        </p>
-      </header>
+<div class="sidebar">
+  <!-- Wrap grab-handle AND sheet-hint together -->
+  <div class="grab-handle-area">
+    <div class="grab-handle"></div>
+    <div class="sheet-hint">Swipe up to search</div>
+  </div>
 
-      <section class="card">
-        <!-- Address Input -->
-        <label for="addressInput" class="label">Enter Address:</label>
-        <input type="text" id="addressInput" placeholder="e.g. 123 Main St" />
+  <div class="sidebar-content">
+    <header>
+      <h1 class="hero-title">Cars Social Visualizer</h1>
+      <p class="hero-subtitle">
+        Visualize any address and its market radius to find growth opportunities.
+      </p>
+    </header>
 
-        <!-- Radius Dropdown -->
-        <div class="radius-wrapper" id="radius">
-          <label class="label" for="radiusSelect">Choose Social Radius Size:</label>
-          <div class="dropdown disabled" id="radiusSelect">
-            <div class="dropdown-selected">Select one</div>
-            <div class="dropdown-options">
-              <div class="dropdown-option" data-value="15">Small - 15 mi</div>
-              <div class="dropdown-option" data-value="30">Large - 30 mi</div>
-            </div>
+    <section class="card">
+      <!-- Address Input -->
+      <label for="addressInput" class="label">Enter Address:</label>
+      <input type="text" id="addressInput" placeholder="e.g. 123 Main St" />
+
+      <!-- Radius Dropdown -->
+      <div class="radius-wrapper" id="radius">
+        <label class="label" for="radiusSelect">Choose Social Radius Size:</label>
+        <div class="dropdown disabled" id="radiusSelect">
+          <div class="dropdown-selected">Select one</div>
+          <div class="dropdown-options">
+            <div class="dropdown-option" data-value="15">Small - 15 mi</div>
+            <div class="dropdown-option" data-value="30">Large - 30 mi</div>
           </div>
         </div>
+      </div>
 
-        <!-- Search Button -->
-        <button id="searchButton">Find Address</button>
+      <!-- Search Button -->
+      <button id="searchButton">Find Address</button>
 
-       <!-- Toggle Pin Mode -->
-        <div class="toggle-section">
-          <label class="toggle-label-wrapper">
-            <span class="toggle-text">📍 Add Pins by Clicking Map</span>
-            <div class="toggle-switch">
-              <input type="checkbox" id="togglePinMode" />
-              <span class="toggle-slider"></span>
-            </div>
-          </label>
-        </div>
-      </section>
-    </div>
-
-      <!-- Clear All Button -->
-       <div class="sidebar-footer">
-          <div class="clear-wrapper" id="clearWrapper">
-            <button id="clearAll">Clear All</button>
+      <!-- Toggle Pin Mode -->
+      <div class="toggle-section">
+        <label class="toggle-label-wrapper">
+          <span class="toggle-text">📍 Add Pins by Clicking Map</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="togglePinMode" />
+            <span class="toggle-slider"></span>
           </div>
-        </div>
+        </label>
+      </div>
+    </section>
+  </div>
+
+  <!-- Clear All Button -->
+  <div class="sidebar-footer">
+    <div class="clear-wrapper" id="clearWrapper">
+      <button id="clearAll">Clear All</button>
     </div>
+  </div>
+</div>
 
     <!-- Map Panel -->
     <div id="map"></div>
