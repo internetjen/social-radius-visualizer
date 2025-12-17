@@ -14,7 +14,9 @@
 <body>
   <main class="app-container">
     <!-- Left Panel -->
-    <div class="sidebar">
+    <!-- <div class="sidebar"> -->
+    <div class="sidebar" >
+        <div class="grab-handle"></div>
       <div class="sidebar-content">
       <header>
         <h1 class="hero-title">Cars Social Visualizer</h1>
@@ -43,12 +45,15 @@
         <!-- Search Button -->
         <button id="searchButton">Find Address</button>
 
-        <!-- Toggle Pin Mode -->
-        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2d9f3;">
-          <button id="togglePinMode" class="toggle-btn" data-active="false">
-            📍 Add Pins by Clicking Map
-            <span class="toggle-status">OFF</span>
-          </button>
+       <!-- Toggle Pin Mode -->
+        <div class="toggle-section">
+          <label class="toggle-label-wrapper">
+            <span class="toggle-text">📍 Add Pins by Clicking Map</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="togglePinMode" />
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
         </div>
       </section>
     </div>

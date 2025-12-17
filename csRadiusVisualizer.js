@@ -119,27 +119,16 @@ document.getElementById('searchButton').addEventListener('click', () => {
   if (address) geocodeAddress(address);
 });
 
-document.getElementById('togglePinMode').addEventListener('click', () => {
-  pinPlacementMode = !pinPlacementMode;
-  const toggleBtn = document.getElementById('togglePinMode');
-  const statusSpan = toggleBtn.querySelector('.toggle-status');
+document.getElementById('togglePinMode').addEventListener('change', function() {
+  pinPlacementMode = this.checked;
   
   if (pinPlacementMode) {
     // Turn ON
-    toggleBtn.dataset.active = 'true';
-    statusSpan.textContent = 'ON';
     map.getContainer().style.cursor = 'crosshair';
-    
-    // Show banner on map
     showClickBanner(true);
-    
   } else {
     // Turn OFF
-    toggleBtn.dataset.active = 'false';
-    statusSpan.textContent = 'OFF';
     map.getContainer().style.cursor = '';
-    
-    // NEW: Show banner when turning off
     showClickBanner(false);
   }
 });
@@ -523,4 +512,49 @@ async function fetchNearbyDealerships(lat, lon, radiusMiles) {
   } catch (err) {
     console.error('Dealership fetch error:', err);
   }
+}
+
+// === Mobile Bottom Sheet Touch Handlers ===
+if (window.innerWidth <= 768) {
+  const sheet = document.querySelector('.sidebar');  // Just use .sidebar
+  const handle = document.querySelector('.grab-handle');
+  
+  let startY = 0;
+  let currentTranslate = 0;
+  let isDragging = false;
+
+  handle.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+    isDragging = true;
+  }, { passive: true });
+
+  handle.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - startY;
+    
+    if (sheet.classList.contains('expanded') && diff > 0) {
+      currentTranslate = diff;
+      sheet.style.transform = `translateY(${currentTranslate}px)`;
+    } else if (!sheet.classList.contains('expanded') && diff < 0) {
+      currentTranslate = diff;
+      sheet.style.transform = `translateY(calc(75vh - 80px + ${currentTranslate}px))`;
+    }
+  }, { passive: true });
+
+  handle.addEventListener('touchend', () => {
+    isDragging = false;
+    
+    if (Math.abs(currentTranslate) > 50) {
+      sheet.classList.toggle('expanded');
+    }
+    
+    sheet.style.transform = '';
+    currentTranslate = 0;
+  });
+
+  handle.addEventListener('click', () => {
+    sheet.classList.toggle('expanded');
+  });
 }
